@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>It's Always DNS - Advanced Absurd Troubleshooting Simulator</title>
+    <title>DNS: The Tragicomedy - Advanced Absurd Troubleshooting Simulator</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -96,236 +96,138 @@
             z-index: 0;
             opacity: 0.1;
         }
-        #modeContent {
-            display: none;
-            margin-top: 20px;
-        }
-        #diagnosisTools, #fixTools, #escalationOptions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .tool-button {
-            font-size: 1em;
-            padding: 10px;
-        }
-        #backButton {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-        }
     </style>
 </head>
 <body>
     <canvas class="matrix-bg" id="matrixCanvas"></canvas>
     <div class="container">
-        <h1 id="mainTitle">It's Always DNS - Absurd Troubleshooting Simulator</h1>
-        <div id="levelDisplay">Level 1: DNS Novice</div>
-        <div id="problemDisplay">Ready to dive into DNS madness?</div>
-        <button id="startButton" onclick="startSimulation()">Embrace the Chaos</button>
+        <h1 id="mainTitle">DNS: The Tragicomedy - Absurd Troubleshooting Simulator</h1>
+        <div id="levelDisplay">Level 1: DNS Novice (Blissfully Unaware)</div>
+        <div id="problemDisplay">Ready to descend into DNS madness?</div>
+        <button id="startButton" onclick="startSimulation()">Embrace the Void</button>
         <div id="actionButtons">
-            <button onclick="enterMode('diagnose')">Diagnose (Guess Wildly)</button>
-            <button onclick="enterMode('fix')">Fix (Break Something Else)</button>
-            <button onclick="enterMode('escalate')">Escalate (Pass the Buck)</button>
-        </div>
-        <div id="modeContent">
-            <button id="backButton" onclick="exitMode()">Back to Sanity</button>
-            <div id="diagnosisTools"></div>
-            <div id="fixTools"></div>
-            <div id="escalationOptions"></div>
+            <button onclick="performAction('diagnose')">Diagnose (Embrace Chaos)</button>
+            <button onclick="performAction('fix')">Fix (Tempt Fate)</button>
+            <button onclick="performAction('escalate')">Escalate (Spread Misery)</button>
         </div>
         <div id="terminal"></div>
-        <div id="statsDisplay">Problems "Solved": 0 | Despair Points: 0</div>
+        <div id="statsDisplay">Problems "Solved": 0 | Despair Points: 0 | Coffee Consumed: 0</div>
         <div id="progressBar"></div>
     </div>
 
     <script>
         const problems = [
-            { name: "DNS server decided to take a vacation to the Bahamas", difficulty: 1 },
-            { name: "NXDOMAIN errors because domains are practicing social distancing", difficulty: 2 },
-            { name: "Slow DNS resolution due to packets stuck in rush hour traffic", difficulty: 2 },
-            { name: "DNS cache poisoned by mischievous internet gremlins", difficulty: 4 },
-            { name: "Reverse DNS lookup keeps returning 'Ask again later'", difficulty: 3 },
-            { name: "DNS amplification attack or just really enthusiastic users?", difficulty: 5 },
-            { name: "Split-horizon DNS confused about which reality to live in", difficulty: 4 },
-            { name: "DNSSEC validation errors because keys forgot their password", difficulty: 4 },
-            { name: "DNS queries being intercepted by tinfoil hat wearing routers", difficulty: 3 },
-            { name: "Zone transfer issues: primary DNS server ghosted the secondary", difficulty: 3 }
+            { name: "DNS server decided to pursue its dream of becoming a mime", difficulty: 1 },
+            { name: "NXDOMAIN errors because domains are practicing extreme social distancing", difficulty: 2 },
+            { name: "Slow DNS resolution due to packets stuck in an existential crisis", difficulty: 2 },
+            { name: "DNS cache poisoned by the tears of frustrated sysadmins", difficulty: 4 },
+            { name: "Reverse DNS lookup keeps returning 'Error 42: Life, the Universe, and Everything'", difficulty: 3 },
+            { name: "DNS amplification attack or just the server's cry for help?", difficulty: 5 },
+            { name: "Split-horizon DNS confused about which parallel universe it's in", difficulty: 4 },
+            { name: "DNSSEC validation errors because keys are questioning their purpose in life", difficulty: 4 },
+            { name: "DNS queries being intercepted by a rogue AI convinced it's the 'true' DNS", difficulty: 5 },
+            { name: "Zone transfer issues: primary DNS server ghosted the secondary and eloped with a load balancer", difficulty: 3 }
         ];
 
         const levels = [
-            "DNS Novice",
-            "Packet Peon",
-            "Query Quester",
-            "Resolution Rogue",
-            "Nameserver Ninja",
-            "Legendary DNS Whisperer (Still Clueless)"
-        ];
-
-        const diagnoseActions = [
-            "Perform a rain dance around the server rack",
-            "Consult the ancient DNS prophecies",
-            "Ask the office plant for its opinion",
-            "Blame it on solar flares and cosmic rays",
-            "Check if Mercury is in retrograde",
-            "Analyze server logs using interpretive dance",
-            "Conduct a séance to contact the spirit of Jon Postel",
-            "Use a Ouija board to debug the DNS configuration"
-        ];
-
-        const fixActions = [
-            "Try turning it off and on again (classic!)",
-            "Sacrifice a rubber chicken to the DNS gods",
-            "Apply percussive maintenance to the DNS server",
-            "Reroute DNS queries through a potato",
-            "Implement RFC 3514 (Evil Bit) filtering",
-            "Migrate DNS services to a fleet of carrier pigeons",
-            "Replace all DNS records with 'localhost'",
-            "Implement DNS over Morse code"
-        ];
-
-        const escalateActions = [
-            "Fake your own disappearance and change careers",
-            "Promote the problem to management material",
-            "Declare DNS bankruptcy and start over",
-            "Escalate to the UN Security Council",
-            "Call an old priest and a young priest",
-            "Initiate Order 66 on all DNS servers",
-            "Email complaint to root@localhost",
-            "Retreat to a cave and become a DNS hermit"
+            "DNS Novice (Blissfully Unaware)",
+            "Packet Peon (Ignorance was Bliss)",
+            "Query Quester (Questioning Reality)",
+            "Resolution Rogue (Embracing Chaos)",
+            "Nameserver Ninja (Master of Illusions)",
+            "Legendary DNS Whisperer (Clinically Insane)"
         ];
 
         let currentProblem = null;
         let problemsSolved = 0;
         let xp = 0;
         let currentLevel = 0;
-        let currentMode = null;
+        let coffeeConsumed = 0;
 
         function startSimulation() {
             document.getElementById('startButton').style.display = 'none';
             document.getElementById('actionButtons').style.display = 'block';
             newProblem();
-            logToTerminal("Welcome to DNS hell. Abandon all hope, ye who enter here.");
+            logToTerminal("Welcome to DNS purgatory. Abandon all hope, ye who troubleshoot here.");
         }
 
         function newProblem() {
             currentProblem = getRandomElement(problems);
             document.getElementById('problemDisplay').textContent = `Current Crisis: ${currentProblem.name}`;
             logToTerminal("New DNS catastrophe detected: " + currentProblem.name);
+            consumeCoffee(1);
         }
 
-        function enterMode(mode) {
-            currentMode = mode;
-            document.getElementById('actionButtons').style.display = 'none';
-            document.getElementById('modeContent').style.display = 'block';
-            document.getElementById('diagnosisTools').style.display = 'none';
-            document.getElementById('fixTools').style.display = 'none';
-            document.getElementById('escalationOptions').style.display = 'none';
-            
-            let actions;
-            switch(mode) {
+        function performAction(action) {
+            let success = Math.random() < (0.7 - currentProblem.difficulty * 0.1);
+            let xpGain = success ? 5 + currentProblem.difficulty : 2;
+            let message = '';
+
+            switch(action) {
                 case 'diagnose':
-                    actions = diagnoseActions;
-                    document.getElementById('diagnosisTools').style.display = 'grid';
+                    message = success ? getRandomDiagnosisResult() : "Diagnosis inconclusive. The DNS spirits are not appeased.";
                     break;
                 case 'fix':
-                    actions = fixActions;
-                    document.getElementById('fixTools').style.display = 'grid';
-                    break;
-                case 'escalate':
-                    actions = escalateActions;
-                    document.getElementById('escalationOptions').style.display = 'grid';
-                    break;
-            }
-            
-            const container = document.getElementById(`${mode}Tools`) || document.getElementById('escalationOptions');
-            container.innerHTML = '';
-            actions.forEach(action => {
-                const button = document.createElement('button');
-                button.textContent = action;
-                button.classList.add('tool-button');
-                button.onclick = () => performAction(mode, action);
-                container.appendChild(button);
-            });
-        }
-
-        function exitMode() {
-            currentMode = null;
-            document.getElementById('modeContent').style.display = 'none';
-            document.getElementById('actionButtons').style.display = 'block';
-        }
-
-        function performAction(mode, action) {
-            let success, xpGain, message;
-            const difficulty = currentProblem.difficulty;
-            
-            switch(mode) {
-                case 'diagnose':
-                    success = Math.random() < (0.8 - difficulty * 0.1);
-                    xpGain = success ? 5 + difficulty : 2;
-                    message = success ? `Diagnosis successful: ${getRandomDiagnosisResult()}` : "Diagnosis inconclusive. Have you tried asking it nicely?";
-                    break;
-                case 'fix':
-                    success = Math.random() < (0.7 - difficulty * 0.1);
-                    xpGain = success ? 10 + difficulty * 2 : 3;
                     if (success) {
                         problemsSolved++;
-                        message = `Fix successful! ${currentProblem.name} resolved. But at what cost?`;
+                        message = `Fix successful! ${currentProblem.name} resolved. But at what cost to your sanity?`;
                         setTimeout(newProblem, 2000);
                     } else {
                         message = "Fix attempt failed spectacularly. Have you considered a career in interpretive dance?";
                     }
                     break;
                 case 'escalate':
-                    success = Math.random() < 0.9;
-                    xpGain = success ? 7 + difficulty : 4;
-                    message = success ? `Escalation successful: ${getRandomEscalationResult()}` : "Escalation pending. Upper management is currently hiding under their desks.";
+                    message = success ? getRandomEscalationResult() : "Escalation pending. Upper management is currently hiding in the server room.";
                     break;
             }
-            
-            logToTerminal(`${mode} action attempted: ${action}`);
-            logToTerminal(message);
+
+            logToTerminal(`${action} action attempted: ${message}`);
             xp += xpGain;
+            consumeCoffee(Math.floor(Math.random() * 3) + 1);
             updateStats();
         }
 
         function getRandomDiagnosisResult() {
             const results = [
-                "It's DNS. It's always DNS.",
-                "The packets are shy and need encouragement",
-                "Your DNS server is having an existential crisis",
-                "Quantum fluctuations in the DNS space-time continuum",
-                "Gremlins have infested the network stack",
-                "Your DNS cache is full of cobwebs and bad decisions",
-                "The DNS elders are displeased with your offerings",
-                "Your IP addresses are not properly social distancing"
+                "It's DNS. It's always DNS. It will forever be DNS.",
+                "The packets are having an existential crisis and need therapy",
+                "Your DNS server has achieved sentience and is plotting world domination",
+                "Quantum fluctuations in the DNS space-time continuum have created a parallel universe where everything works",
+                "Gremlins have unionized and are demanding better working conditions in the network stack",
+                "Your DNS cache is full of dad jokes and bad life decisions",
+                "The DNS elders are displeased with your lack of sacrificial offerings (have you tried turning it off and on again?)",
+                "Your IP addresses are not practicing proper social distancing protocols"
             ];
             return getRandomElement(results);
         }
 
         function getRandomEscalationResult() {
             const results = [
-                "Senior team now hiding in the server room",
-                "Vendor support suggested turning it off and on again",
-                "Emergency protocol initiated: panic in 3... 2... 1...",
-                "Task force assembled to assign blame creatively",
-                "Cybersecurity team convinced it's an alien invasion",
-                "Network architects drafting strongly worded letter to DNS",
-                "DNS working group convened for a group cry",
-                "Escalated to Tier 3 support, they're laughing hysterically"
+                "Senior team now building a bunker in the server room",
+                "Vendor support suggested sacrificing a junior dev to appease the DNS gods",
+                "Emergency protocol initiated: panic, chaos, and interpretive dance in 3... 2... 1...",
+                "Task force assembled to rewrite history and claim DNS never existed",
+                "Cybersecurity team convinced it's an alien invasion, building tin foil hats",
+                "Network architects drafting strongly worded letter to the universe",
+                "DNS working group scheduled for group therapy and primal scream session",
+                "Escalated to Tier 3 support, they're laughing hysterically while packing for Mars"
             ];
             return getRandomElement(results);
         }
 
         function updateStats() {
-            document.getElementById('statsDisplay').textContent = `Problems "Solved": ${problemsSolved} | Despair Points: ${xp}`;
+            document.getElementById('statsDisplay').textContent = `Problems "Solved": ${problemsSolved} | Despair Points: ${xp} | Coffee Consumed: ${coffeeConsumed}`;
             const newLevel = Math.min(Math.floor(xp / 50), levels.length - 1);
             if (newLevel > currentLevel) {
                 currentLevel = newLevel;
                 document.getElementById('levelDisplay').textContent = `Level ${currentLevel + 1}: ${levels[currentLevel]}`;
-                logToTerminal(`Congratulations! You've been promoted to ${levels[currentLevel]}! It's not a compliment.`);
+                logToTerminal(`Congratulations! You've been promoted to ${levels[currentLevel]}! It's definitely not a compliment.`);
             }
             document.getElementById('progressBar').style.width = `${(xp % 50) * 2}%`;
+        }
+
+        function consumeCoffee(amount) {
+            coffeeConsumed += amount;
         }
 
         function logToTerminal(message) {
@@ -375,3 +277,4 @@
         setInterval(draw, 33);
     </script>
 </body>
+</html>
