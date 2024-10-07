@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>It's Always DNS - Advanced Troubleshooting Simulator</title>
+    <title>It's Always DNS - Advanced Absurd Troubleshooting Simulator</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -119,86 +119,80 @@
 <body>
     <canvas class="matrix-bg" id="matrixCanvas"></canvas>
     <div class="container">
-        <h1 id="mainTitle">DNS Troubleshooting Simulator</h1>
+        <h1 id="mainTitle">It's Always DNS - Absurd Troubleshooting Simulator</h1>
         <div id="levelDisplay">Level 1: DNS Novice</div>
-        <div id="problemDisplay">Ready to tackle some DNS issues?</div>
-        <button id="startButton" onclick="startSimulation()">Start Simulation</button>
+        <div id="problemDisplay">Ready to dive into DNS madness?</div>
+        <button id="startButton" onclick="startSimulation()">Embrace the Chaos</button>
         <div id="actionButtons">
-            <button onclick="enterMode('diagnose')">Diagnose</button>
-            <button onclick="enterMode('fix')">Attempt Fix</button>
-            <button onclick="enterMode('escalate')">Escalate</button>
+            <button onclick="enterMode('diagnose')">Diagnose (Guess Wildly)</button>
+            <button onclick="enterMode('fix')">Fix (Break Something Else)</button>
+            <button onclick="enterMode('escalate')">Escalate (Pass the Buck)</button>
         </div>
         <div id="modeContent">
-            <button id="backButton" onclick="exitMode()">Back</button>
+            <button id="backButton" onclick="exitMode()">Back to Sanity</button>
             <div id="diagnosisTools"></div>
             <div id="fixTools"></div>
             <div id="escalationOptions"></div>
         </div>
         <div id="terminal"></div>
-        <div id="statsDisplay">Problems Solved: 0 | XP: 0</div>
+        <div id="statsDisplay">Problems "Solved": 0 | Despair Points: 0</div>
         <div id="progressBar"></div>
     </div>
 
     <script>
         const problems = [
-            { name: "DNS server not responding", difficulty: 1 },
-            { name: "NXDOMAIN errors for valid domains", difficulty: 2 },
-            { name: "Slow DNS resolution", difficulty: 2 },
-            { name: "Intermittent DNS failures", difficulty: 3 },
-            { name: "DNS cache poisoning detected", difficulty: 4 },
-            { name: "Reverse DNS lookup failing", difficulty: 3 },
-            { name: "DNS zone transfer issues", difficulty: 3 },
-            { name: "DNSSEC validation errors", difficulty: 4 },
-            { name: "DNS amplification attack in progress", difficulty: 5 },
-            { name: "Split-horizon DNS misconfiguration", difficulty: 4 }
+            { name: "DNS server decided to take a vacation to the Bahamas", difficulty: 1 },
+            { name: "NXDOMAIN errors because domains are practicing social distancing", difficulty: 2 },
+            { name: "Slow DNS resolution due to packets stuck in rush hour traffic", difficulty: 2 },
+            { name: "DNS cache poisoned by mischievous internet gremlins", difficulty: 4 },
+            { name: "Reverse DNS lookup keeps returning 'Ask again later'", difficulty: 3 },
+            { name: "DNS amplification attack or just really enthusiastic users?", difficulty: 5 },
+            { name: "Split-horizon DNS confused about which reality to live in", difficulty: 4 },
+            { name: "DNSSEC validation errors because keys forgot their password", difficulty: 4 },
+            { name: "DNS queries being intercepted by tinfoil hat wearing routers", difficulty: 3 },
+            { name: "Zone transfer issues: primary DNS server ghosted the secondary", difficulty: 3 }
         ];
 
         const levels = [
             "DNS Novice",
-            "DNS Apprentice",
-            "DNS Journeyman",
-            "DNS Expert",
-            "DNS Master",
-            "Legendary DNS Whisperer"
+            "Packet Peon",
+            "Query Quester",
+            "Resolution Rogue",
+            "Nameserver Ninja",
+            "Legendary DNS Whisperer (Still Clueless)"
         ];
 
         const diagnoseActions = [
-            "Check DNS server logs",
-            "Perform nslookup and dig queries",
-            "Analyze BIND configuration",
-            "Inspect DNS cache",
-            "Verify DNS propagation",
-            "Run Wireshark capture on DNS traffic",
-            "Check firewall rules for DNS ports",
-            "Investigate potential DNS hijacking",
-            "Analyze DNS query patterns",
-            "Verify DNS record consistency across servers"
+            "Perform a rain dance around the server rack",
+            "Consult the ancient DNS prophecies",
+            "Ask the office plant for its opinion",
+            "Blame it on solar flares and cosmic rays",
+            "Check if Mercury is in retrograde",
+            "Analyze server logs using interpretive dance",
+            "Conduct a séance to contact the spirit of Jon Postel",
+            "Use a Ouija board to debug the DNS configuration"
         ];
 
         const fixActions = [
-            "Restart DNS server",
-            "Flush DNS cache",
-            "Update DNS records",
-            "Configure DNS forwarders",
-            "Implement DNSSEC",
-            "Optimize DNS query handling",
-            "Set up DNS load balancing",
-            "Configure split-horizon DNS",
-            "Implement DNS security extensions",
-            "Update DNS software to latest version"
+            "Try turning it off and on again (classic!)",
+            "Sacrifice a rubber chicken to the DNS gods",
+            "Apply percussive maintenance to the DNS server",
+            "Reroute DNS queries through a potato",
+            "Implement RFC 3514 (Evil Bit) filtering",
+            "Migrate DNS services to a fleet of carrier pigeons",
+            "Replace all DNS records with 'localhost'",
+            "Implement DNS over Morse code"
         ];
 
         const escalateActions = [
-            "Contact senior DNS administrator",
-            "Open ticket with DNS provider",
-            "Escalate to network operations center",
-            "Consult DNS working group",
-            "Initiate emergency response protocol",
-            "Engage vendor support for DNS software",
-            "Assemble cross-functional DNS task force",
-            "Escalate to cybersecurity team",
-            "Initiate DNS infrastructure review",
-            "Call emergency meeting with network architects"
+            "Fake your own disappearance and change careers",
+            "Promote the problem to management material",
+            "Declare DNS bankruptcy and start over",
+            "Escalate to the UN Security Council",
+            "Call an old priest and a young priest",
+            "Initiate Order 66 on all DNS servers",
+            "Email complaint to root@localhost",
+            "Retreat to a cave and become a DNS hermit"
         ];
 
         let currentProblem = null;
@@ -211,12 +205,13 @@
             document.getElementById('startButton').style.display = 'none';
             document.getElementById('actionButtons').style.display = 'block';
             newProblem();
+            logToTerminal("Welcome to DNS hell. Abandon all hope, ye who enter here.");
         }
 
         function newProblem() {
             currentProblem = getRandomElement(problems);
-            document.getElementById('problemDisplay').textContent = `Current Issue: ${currentProblem.name}`;
-            logToTerminal("New problem detected: " + currentProblem.name);
+            document.getElementById('problemDisplay').textContent = `Current Crisis: ${currentProblem.name}`;
+            logToTerminal("New DNS catastrophe detected: " + currentProblem.name);
         }
 
         function enterMode(mode) {
@@ -268,27 +263,27 @@
                 case 'diagnose':
                     success = Math.random() < (0.8 - difficulty * 0.1);
                     xpGain = success ? 5 + difficulty : 2;
-                    message = success ? `Diagnosis successful: ${getRandomDiagnosisResult()}` : "Diagnosis inconclusive. Further investigation required.";
+                    message = success ? `Diagnosis successful: ${getRandomDiagnosisResult()}` : "Diagnosis inconclusive. Have you tried asking it nicely?";
                     break;
                 case 'fix':
                     success = Math.random() < (0.7 - difficulty * 0.1);
                     xpGain = success ? 10 + difficulty * 2 : 3;
                     if (success) {
                         problemsSolved++;
-                        message = `Fix successful! ${currentProblem.name} resolved.`;
+                        message = `Fix successful! ${currentProblem.name} resolved. But at what cost?`;
                         setTimeout(newProblem, 2000);
                     } else {
-                        message = "Fix attempt failed. Consider trying a different approach or escalating.";
+                        message = "Fix attempt failed spectacularly. Have you considered a career in interpretive dance?";
                     }
                     break;
                 case 'escalate':
                     success = Math.random() < 0.9;
                     xpGain = success ? 7 + difficulty : 4;
-                    message = success ? `Escalation successful: ${getRandomEscalationResult()}` : "Escalation pending. Await further instructions from upper management.";
+                    message = success ? `Escalation successful: ${getRandomEscalationResult()}` : "Escalation pending. Upper management is currently hiding under their desks.";
                     break;
             }
             
-            logToTerminal(`${mode} action: ${action}`);
+            logToTerminal(`${mode} action attempted: ${action}`);
             logToTerminal(message);
             xp += xpGain;
             updateStats();
@@ -296,39 +291,39 @@
 
         function getRandomDiagnosisResult() {
             const results = [
-                "Issue isolated to primary DNS server",
-                "Detected misconfiguration in zone file",
-                "Identified network connectivity problem",
-                "Found outdated DNS records",
-                "Discovered unauthorized DNS changes",
-                "Detected abnormal query patterns",
-                "Identified DNSSEC validation failure",
-                "Found inconsistent DNS caching behavior"
+                "It's DNS. It's always DNS.",
+                "The packets are shy and need encouragement",
+                "Your DNS server is having an existential crisis",
+                "Quantum fluctuations in the DNS space-time continuum",
+                "Gremlins have infested the network stack",
+                "Your DNS cache is full of cobwebs and bad decisions",
+                "The DNS elders are displeased with your offerings",
+                "Your IP addresses are not properly social distancing"
             ];
             return getRandomElement(results);
         }
 
         function getRandomEscalationResult() {
             const results = [
-                "Senior team now investigating the issue",
-                "Vendor support engaged for advanced troubleshooting",
-                "Emergency protocol initiated for critical DNS resolution",
-                "Task force assembled to address the problem",
-                "Cybersecurity team analyzing potential DNS-based attack",
-                "Network architects reviewing DNS infrastructure",
-                "DNS working group convened for collaborative problem-solving",
-                "Escalated to Tier 3 support for specialized assistance"
+                "Senior team now hiding in the server room",
+                "Vendor support suggested turning it off and on again",
+                "Emergency protocol initiated: panic in 3... 2... 1...",
+                "Task force assembled to assign blame creatively",
+                "Cybersecurity team convinced it's an alien invasion",
+                "Network architects drafting strongly worded letter to DNS",
+                "DNS working group convened for a group cry",
+                "Escalated to Tier 3 support, they're laughing hysterically"
             ];
             return getRandomElement(results);
         }
 
         function updateStats() {
-            document.getElementById('statsDisplay').textContent = `Problems Solved: ${problemsSolved} | XP: ${xp}`;
+            document.getElementById('statsDisplay').textContent = `Problems "Solved": ${problemsSolved} | Despair Points: ${xp}`;
             const newLevel = Math.min(Math.floor(xp / 50), levels.length - 1);
             if (newLevel > currentLevel) {
                 currentLevel = newLevel;
                 document.getElementById('levelDisplay').textContent = `Level ${currentLevel + 1}: ${levels[currentLevel]}`;
-                logToTerminal(`Congratulations! You've been promoted to ${levels[currentLevel]}!`);
+                logToTerminal(`Congratulations! You've been promoted to ${levels[currentLevel]}! It's not a compliment.`);
             }
             document.getElementById('progressBar').style.width = `${(xp % 50) * 2}%`;
         }
@@ -380,4 +375,3 @@
         setInterval(draw, 33);
     </script>
 </body>
-</html>
