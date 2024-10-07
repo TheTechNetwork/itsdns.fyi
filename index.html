@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>It's Always DNS - Troubleshooting Simulator</title>
+    <title>It's Always DNS - Advanced Troubleshooting Simulator</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -96,6 +96,24 @@
             z-index: 0;
             opacity: 0.1;
         }
+        #modeContent {
+            display: none;
+            margin-top: 20px;
+        }
+        #diagnosisTools, #fixTools, #escalationOptions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .tool-button {
+            font-size: 1em;
+            padding: 10px;
+        }
+        #backButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -106,9 +124,15 @@
         <div id="problemDisplay">Ready to tackle some DNS issues?</div>
         <button id="startButton" onclick="startSimulation()">Start Simulation</button>
         <div id="actionButtons">
-            <button onclick="diagnose()">Diagnose</button>
-            <button onclick="attemptFix()">Attempt Fix</button>
-            <button onclick="escalate()">Escalate</button>
+            <button onclick="enterMode('diagnose')">Diagnose</button>
+            <button onclick="enterMode('fix')">Attempt Fix</button>
+            <button onclick="enterMode('escalate')">Escalate</button>
+        </div>
+        <div id="modeContent">
+            <button id="backButton" onclick="exitMode()">Back</button>
+            <div id="diagnosisTools"></div>
+            <div id="fixTools"></div>
+            <div id="escalationOptions"></div>
         </div>
         <div id="terminal"></div>
         <div id="statsDisplay">Problems Solved: 0 | XP: 0</div>
@@ -139,48 +163,49 @@
         ];
 
         const diagnoseActions = [
-            "Checking DNS server logs",
-            "Performing nslookup and dig queries",
-            "Analyzing BIND configuration",
-            "Inspecting DNS cache",
-            "Verifying DNS propagation",
-            "Running Wireshark capture on DNS traffic",
-            "Checking firewall rules for DNS ports",
-            "Investigating potential DNS hijacking",
-            "Analyzing DNS query patterns",
-            "Verifying DNS record consistency across servers"
+            "Check DNS server logs",
+            "Perform nslookup and dig queries",
+            "Analyze BIND configuration",
+            "Inspect DNS cache",
+            "Verify DNS propagation",
+            "Run Wireshark capture on DNS traffic",
+            "Check firewall rules for DNS ports",
+            "Investigate potential DNS hijacking",
+            "Analyze DNS query patterns",
+            "Verify DNS record consistency across servers"
         ];
 
         const fixActions = [
-            "Restarting DNS server",
-            "Flushing DNS cache",
-            "Updating DNS records",
-            "Configuring DNS forwarders",
-            "Implementing DNSSEC",
-            "Optimizing DNS query handling",
-            "Setting up DNS load balancing",
-            "Configuring split-horizon DNS",
-            "Implementing DNS security extensions",
-            "Updating DNS software to latest version"
+            "Restart DNS server",
+            "Flush DNS cache",
+            "Update DNS records",
+            "Configure DNS forwarders",
+            "Implement DNSSEC",
+            "Optimize DNS query handling",
+            "Set up DNS load balancing",
+            "Configure split-horizon DNS",
+            "Implement DNS security extensions",
+            "Update DNS software to latest version"
         ];
 
         const escalateActions = [
-            "Contacting senior DNS administrator",
-            "Opening ticket with DNS provider",
-            "Escalating to network operations center",
-            "Consulting DNS working group",
-            "Initiating emergency response protocol",
-            "Engaging vendor support for DNS software",
-            "Assembling cross-functional DNS task force",
-            "Escalating to cybersecurity team for potential DNS attack",
-            "Initiating DNS infrastructure review",
-            "Calling emergency meeting with network architects"
+            "Contact senior DNS administrator",
+            "Open ticket with DNS provider",
+            "Escalate to network operations center",
+            "Consult DNS working group",
+            "Initiate emergency response protocol",
+            "Engage vendor support for DNS software",
+            "Assemble cross-functional DNS task force",
+            "Escalate to cybersecurity team",
+            "Initiate DNS infrastructure review",
+            "Call emergency meeting with network architects"
         ];
 
         let currentProblem = null;
         let problemsSolved = 0;
         let xp = 0;
         let currentLevel = 0;
+        let currentMode = null;
 
         function startSimulation() {
             document.getElementById('startButton').style.display = 'none';
@@ -194,69 +219,107 @@
             logToTerminal("New problem detected: " + currentProblem.name);
         }
 
-        function diagnose() {
-            const action = getRandomElement(diagnoseActions);
-            const successRate = 0.7 - (currentProblem.difficulty * 0.1);
-            const success = Math.random() < successRate;
+        function enterMode(mode) {
+            currentMode = mode;
+            document.getElementById('actionButtons').style.display = 'none';
+            document.getElementById('modeContent').style.display = 'block';
+            document.getElementById('diagnosisTools').style.display = 'none';
+            document.getElementById('fixTools').style.display = 'none';
+            document.getElementById('escalationOptions').style.display = 'none';
             
-            logToTerminal(`Diagnosis action: ${action}`);
-            
-            if (success) {
-                logToTerminal("Diagnosis successful: " + getRandomElement([
-                    "Issue isolated to primary DNS server",
-                    "Detected misconfiguration in zone file",
-                    "Identified network connectivity problem",
-                    "Found outdated DNS records",
-                    "Discovered unauthorized DNS changes"
-                ]));
-                xp += 5;
-            } else {
-                logToTerminal("Diagnosis inconclusive. Further investigation required.");
-                xp += 2;
+            let actions;
+            switch(mode) {
+                case 'diagnose':
+                    actions = diagnoseActions;
+                    document.getElementById('diagnosisTools').style.display = 'grid';
+                    break;
+                case 'fix':
+                    actions = fixActions;
+                    document.getElementById('fixTools').style.display = 'grid';
+                    break;
+                case 'escalate':
+                    actions = escalateActions;
+                    document.getElementById('escalationOptions').style.display = 'grid';
+                    break;
             }
+            
+            const container = document.getElementById(`${mode}Tools`) || document.getElementById('escalationOptions');
+            container.innerHTML = '';
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.textContent = action;
+                button.classList.add('tool-button');
+                button.onclick = () => performAction(mode, action);
+                container.appendChild(button);
+            });
+        }
+
+        function exitMode() {
+            currentMode = null;
+            document.getElementById('modeContent').style.display = 'none';
+            document.getElementById('actionButtons').style.display = 'block';
+        }
+
+        function performAction(mode, action) {
+            let success, xpGain, message;
+            const difficulty = currentProblem.difficulty;
+            
+            switch(mode) {
+                case 'diagnose':
+                    success = Math.random() < (0.8 - difficulty * 0.1);
+                    xpGain = success ? 5 + difficulty : 2;
+                    message = success ? `Diagnosis successful: ${getRandomDiagnosisResult()}` : "Diagnosis inconclusive. Further investigation required.";
+                    break;
+                case 'fix':
+                    success = Math.random() < (0.7 - difficulty * 0.1);
+                    xpGain = success ? 10 + difficulty * 2 : 3;
+                    if (success) {
+                        problemsSolved++;
+                        message = `Fix successful! ${currentProblem.name} resolved.`;
+                        setTimeout(newProblem, 2000);
+                    } else {
+                        message = "Fix attempt failed. Consider trying a different approach or escalating.";
+                    }
+                    break;
+                case 'escalate':
+                    success = Math.random() < 0.9;
+                    xpGain = success ? 7 + difficulty : 4;
+                    message = success ? `Escalation successful: ${getRandomEscalationResult()}` : "Escalation pending. Await further instructions from upper management.";
+                    break;
+            }
+            
+            logToTerminal(`${mode} action: ${action}`);
+            logToTerminal(message);
+            xp += xpGain;
             updateStats();
         }
 
-        function attemptFix() {
-            const action = getRandomElement(fixActions);
-            const successRate = 0.6 - (currentProblem.difficulty * 0.08);
-            const success = Math.random() < successRate;
-            
-            logToTerminal(`Attempting fix: ${action}`);
-            
-            if (success) {
-                problemsSolved++;
-                xp += 10 + (currentProblem.difficulty * 2);
-                logToTerminal(`Fix successful! ${currentProblem.name} resolved.`);
-                newProblem();
-            } else {
-                logToTerminal("Fix attempt failed. Consider trying a different approach or escalating.");
-                xp += 3;
-            }
-            updateStats();
+        function getRandomDiagnosisResult() {
+            const results = [
+                "Issue isolated to primary DNS server",
+                "Detected misconfiguration in zone file",
+                "Identified network connectivity problem",
+                "Found outdated DNS records",
+                "Discovered unauthorized DNS changes",
+                "Detected abnormal query patterns",
+                "Identified DNSSEC validation failure",
+                "Found inconsistent DNS caching behavior"
+            ];
+            return getRandomElement(results);
         }
 
-        function escalate() {
-            const action = getRandomElement(escalateActions);
-            const successRate = 0.8;
-            const success = Math.random() < successRate;
-            
-            logToTerminal(`Escalation action: ${action}`);
-            
-            if (success) {
-                logToTerminal("Escalation successful: " + getRandomElement([
-                    "Senior team now investigating the issue",
-                    "Vendor support engaged for advanced troubleshooting",
-                    "Emergency protocol initiated for critical DNS resolution",
-                    "Task force assembled to address the problem",
-                    "Cybersecurity team analyzing potential DNS-based attack"
-                ]));
-                xp += 7 + (currentProblem.difficulty * 1);
-            } else {
-                logToTerminal("Escalation pending. Await further instructions from upper management.");
-                xp += 4;
-            }
-            updateStats();
+        function getRandomEscalationResult() {
+            const results = [
+                "Senior team now investigating the issue",
+                "Vendor support engaged for advanced troubleshooting",
+                "Emergency protocol initiated for critical DNS resolution",
+                "Task force assembled to address the problem",
+                "Cybersecurity team analyzing potential DNS-based attack",
+                "Network architects reviewing DNS infrastructure",
+                "DNS working group convened for collaborative problem-solving",
+                "Escalated to Tier 3 support for specialized assistance"
+            ];
+            return getRandomElement(results);
         }
 
         function updateStats() {
