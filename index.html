@@ -49,6 +49,7 @@
             transition: all 0.3s ease;
             text-shadow: 0 0 5px #00ff00;
             box-shadow: 0 0 10px #00ff00;
+            margin: 10px;
         }
         button:hover {
             background-color: #00ff00;
@@ -79,6 +80,19 @@
             80% { transform: translate(5px, -5px) }
             100% { transform: translate(0) }
         }
+        #progressBar {
+            width: 0;
+            height: 5px;
+            background-color: #00ff00;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            transition: width 0.5s ease;
+        }
+        #statsDisplay {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -87,7 +101,10 @@
         <h1 id="mainTitle">What's the problem?</h1>
         <div id="problemDisplay">Initializing DNS troubleshooter...</div>
         <button onclick="revealProblem()">Diagnose</button>
+        <button onclick="attemptFix()">Attempt Fix</button>
         <div id="dnsArt"></div>
+        <div id="statsDisplay">Problems Diagnosed: 0 | Fixes Attempted: 0 | Success Rate: 0%</div>
+        <div id="progressBar"></div>
     </div>
 
     <script>
@@ -162,6 +179,10 @@
 /       \\   |_____/|___/\\_____/`
         ];
 
+        let problemsDiagnosed = 0;
+        let fixesAttempted = 0;
+        let fixesSucceeded = 0;
+
         function getRandomElement(array) {
             return array[Math.floor(Math.random() * array.length)];
         }
@@ -181,6 +202,35 @@
             problemDisplay.style.animation = 'none';
             problemDisplay.offsetHeight; // Trigger reflow
             problemDisplay.style.animation = 'glitch 0.3s linear';
+
+            problemsDiagnosed++;
+            updateStats();
+        }
+
+        function attemptFix() {
+            fixesAttempted++;
+            const success = Math.random() < 0.5; // 50% chance of success
+            if (success) {
+                fixesSucceeded++;
+                document.getElementById('problemDisplay').textContent = "Fix successful! ...until the next DNS problem.";
+            } else {
+                document.getElementById('problemDisplay').textContent = "Fix failed. Have you tried turning it off and on again?";
+            }
+            updateStats();
+        }
+
+        function updateStats() {
+            const successRate = fixesAttempted > 0 ? (fixesSucceeded / fixesAttempted * 100).toFixed(1) : 0;
+            document.getElementById('statsDisplay').textContent = 
+                `Problems Diagnosed: ${problemsDiagnosed} | Fixes Attempted: ${fixesAttempted} | Success Rate: ${successRate}%`;
+            
+            // Update progress bar
+            const progress = (problemsDiagnosed % 10) * 10; // Reset every 10 diagnoses
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            if (problemsDiagnosed % 10 === 0 && problemsDiagnosed > 0) {
+                alert(`Congratulations! You've diagnosed ${problemsDiagnosed} DNS problems. You're a true IT hero!`);
+            }
         }
 
         // Matrix rain effect
