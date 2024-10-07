@@ -1,42 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-website, initial-scale=1.0">
-  <title>itsdns.fyi: The Internet's Shady Back Alley (But for Websites)</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #222;
-      color: #f1f1f1;
-    }
-    h1 {
-      font-size: 2em;
-      margin-bottom: 10px;
-      color: crimson;
-    }
-    .glitch {
-      text-shadow: 0 0 2px #fff, 0 0 5px crimson;
-    }
-    .warning {
-      color: red;
-      font-weight: bold;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It's Always DNS</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000000;
+            color: #00ff00;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background-color: rgba(10, 10, 10, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,255,0,0.3);
+            max-width: 80%;
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        #problemDisplay {
+            font-size: 2em;
+            margin-bottom: 30px;
+            min-height: 2.5em;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        button {
+            font-size: 1.3em;
+            padding: 15px 30px;
+            cursor: pointer;
+            background-color: #003300;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        button:hover {
+            background-color: #00ff00;
+            color: #000000;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        #dnsArt {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 0.8em;
+            margin-top: 30px;
+            opacity: 0.7;
+        }
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.1;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-5px, 5px) }
+            40% { transform: translate(-5px, -5px) }
+            60% { transform: translate(5px, 5px) }
+            80% { transform: translate(5px, -5px) }
+            100% { transform: translate(0) }
+        }
+    </style>
 </head>
 <body>
-  <h1 class="glitch">itsdns.fyi: We Wouldn't Download a Website... Would You?</h1>
-  <p>You think you control the internet?  Think again, meatbag. Welcome to the rabbit hole that is itsdns.fyi, the internet's most dubious website name translator (don't judge, it was on sale).</p>
+    <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+    <div class="container">
+        <h1 id="mainTitle">What's the problem?</h1>
+        <div id="problemDisplay">Initializing DNS troubleshooter...</div>
+        <button onclick="revealProblem()">Diagnose</button>
+        <div id="dnsArt"></div>
+    </div>
 
-  <h2>The Black Market of IP Addresses</h2>
-  <p>Forget sunshine and rainbows. Here's the truth: websites are just elaborate scams, a front for the real business - IP addresses.  Those long, cryptic numbers are the internet's true currency, and itsdns.fyi is the shady organization controlling the black market.</p>
-  <img src="/src/images/itsdns-evenwhennot.jpg" alt="it was dns" width="200">  <p>We're the ones whispering numbers into your browser's ear, translating your pleas for cat videos into the cold, hard cash of the digital underworld.  And let's be honest, half the time we just pick whatever random website makes us chuckle. </p>
+    <script>
+        const problems = [
+            "It's DNS, obviously!",
+            "Have you tried turning DNS off and on again?",
+            "DNS: Because someone has to be the fall guy",
+            "Error 53: DNS ate my homework",
+            "DNS: The silent killer of productivity",
+            "Breaking News: Local DNS server goes rogue, thousands of queries stranded",
+            "Plot twist: It was DNS all along",
+            "In a world where everything works... except DNS",
+            "DNS: Making network admins cry since 1983",
+            "Error 404: DNS not found... Oh wait.",
+            "DNS: Because 'It works on my machine' needed a friend",
+            "Keep Calm and Blame DNS",
+            "I don't always test my code, but when I do, I blame DNS",
+            "DNS: The reason your coffee went cold",
+            "Schrödinger's DNS: It's both working and not working until you observe it",
+            "DNS: The unsung villain of every IT horror story",
+            "Error 418: I'm a teapot. Just kidding, it's DNS again",
+            "DNS: Turning 'Quick fixes' into all-nighters since forever",
+            "In the criminal justice system, DNS-based offenses are considered especially heinous",
+            "DNS: Because someone has to keep the coffee industry in business",
+            "DNS: The only constant in a world of variables",
+            "Error 53110: DNS has become self-aware. Run.",
+            "DNS: Making 'It works on my machine' a universal truth",
+            "The first rule of IT Club: It's always DNS",
+            "DNS: Because network troubleshooting needed a final boss"
+        ];
 
-  <h2 class="warning">Disclaimer: We are not responsible for existential dread, rickrolls, or sudden urges to buy novelty socks. </h2>  
-  <p>Without itsdns.fyi, you'd be endlessly wandering the wasteland of IP addresses, doomed to stumble upon questionable content at best. So next time you reach a website, thank your lucky stars for the chaos that is itsdns.fyi. Because the alternative is far worse.  We could send you to a rickroll... or something much, much weirder.</p>
+        const titles = [
+            "What's the problem?",
+            "DNS Diagnosis Center",
+            "The Root of All Evil",
+            "Network Troubleshooter",
+            "Why Is It Always DNS?",
+            "The DNS Dilemma",
+            "Abandon All Hope, Ye Who Enter",
+            "DNS: The Final Frontier",
+            "Welcome to DNS Hell",
+            "The Neverending Query"
+        ];
 
-  <p>We are itsdns.fyi. We are the glitch in the matrix. We are the reason you might get rickrolled... or worse.  You're welcome. (We're mostly kidding... maybe.)</p>
+        const asciiArts = [
+            ` _____  _   _  _____ 
+|  __ \\| \\ | |/ ____|
+| |  | |  \\| | (___  
+| |  | | . \` |\\___ \\ 
+| |__| | |\\  |____) |
+|_____/|_| \\_|_____/ `,
+            `______ _   _ _____ 
+|  _  \\ | | /  ___|
+| | | | | | \\ \`--.
+| | | | | | |\`--. \\
+| |/ /| |_| /\\__/ /
+|___/  \\___/\\____/ `,
+            ` ____ ____ ____ 
+||D |||N |||S ||
+||__|||__|||__||
+|/__\\|/__\\|/__\\|`,
+            `+-----+
+|  D  |
+|N   S|
++-----+`,
+            `/\\ \\   //\\
+\\ \\ \\ // /   _____ _   _ _____ 
+ \\ \\V/ /   |  __ \\ | | /  ___|
+  \\_/\\_/    | |  | | | | \\___ 
+  /   \\     | |  | | | |  ___) |
+ / DNS \\    | |__| |_| | |____/ 
+/       \\   |_____/|___/\\_____/`
+        ];
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function setRandomTitle() {
+            document.getElementById('mainTitle').textContent = getRandomElement(titles);
+        }
+
+        function setRandomAsciiArt() {
+            document.getElementById('dnsArt').textContent = getRandomElement(asciiArts);
+        }
+
+        function revealProblem() {
+            const problemDisplay = document.getElementById('problemDisplay');
+            problemDisplay.textContent = getRandomElement(problems);
+            
+            problemDisplay.style.animation = 'none';
+            problemDisplay.offsetHeight; // Trigger reflow
+            problemDisplay.style.animation = 'glitch 0.3s linear';
+        }
+
+        // Matrix rain effect
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff00';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        // Initialize random elements
+        setRandomTitle();
+        setRandomAsciiArt();
+
+        // Change title and ASCII art periodically
+        setInterval(() => {
+            setRandomTitle();
+            setRandomAsciiArt();
+        }, 10000); // Every 10 seconds
+    </script>
 </body>
 </html>
