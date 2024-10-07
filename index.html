@@ -56,38 +56,15 @@
             color: #000000;
             box-shadow: 0 0 20px #00ff00;
         }
-        #dnsArt {
-            font-family: monospace;
-            white-space: pre;
-            font-size: 0.8em;
-            margin-top: 30px;
-            opacity: 0.7;
-        }
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.1;
-        }
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-5px, 5px) }
-            40% { transform: translate(-5px, -5px) }
-            60% { transform: translate(5px, 5px) }
-            80% { transform: translate(5px, -5px) }
-            100% { transform: translate(0) }
-        }
-        #progressBar {
-            width: 0;
-            height: 5px;
-            background-color: #00ff00;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            transition: width 0.5s ease;
+        #terminal {
+            background-color: #001100;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: left;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 0.9em;
         }
         #statsDisplay {
             font-size: 1.2em;
@@ -101,15 +78,23 @@
             margin-top: 20px;
             font-weight: bold;
         }
-        #terminal {
-            background-color: #001100;
-            border: 1px solid #00ff00;
-            padding: 10px;
-            margin-top: 20px;
-            text-align: left;
-            height: 150px;
-            overflow-y: auto;
-            font-size: 0.9em;
+        #progressBar {
+            width: 0;
+            height: 5px;
+            background-color: #00ff00;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            transition: width 0.5s ease;
+        }
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.1;
         }
     </style>
 </head>
@@ -132,16 +117,16 @@
 
     <script>
         const problems = [
-            "DNS server not responding",
-            "NXDOMAIN errors for valid domains",
-            "Slow DNS resolution",
-            "Intermittent DNS failures",
-            "DNS cache poisoning detected",
-            "Reverse DNS lookup failing",
-            "DNS zone transfer issues",
-            "DNSSEC validation errors",
-            "DNS amplification attack in progress",
-            "Split-horizon DNS misconfiguration"
+            { name: "DNS server not responding", difficulty: 1 },
+            { name: "NXDOMAIN errors for valid domains", difficulty: 2 },
+            { name: "Slow DNS resolution", difficulty: 2 },
+            { name: "Intermittent DNS failures", difficulty: 3 },
+            { name: "DNS cache poisoning detected", difficulty: 4 },
+            { name: "Reverse DNS lookup failing", difficulty: 3 },
+            { name: "DNS zone transfer issues", difficulty: 3 },
+            { name: "DNSSEC validation errors", difficulty: 4 },
+            { name: "DNS amplification attack in progress", difficulty: 5 },
+            { name: "Split-horizon DNS misconfiguration", difficulty: 4 }
         ];
 
         const levels = [
@@ -153,7 +138,46 @@
             "Legendary DNS Whisperer"
         ];
 
-        let currentProblem = "";
+        const diagnoseActions = [
+            "Checking DNS server logs",
+            "Performing nslookup and dig queries",
+            "Analyzing BIND configuration",
+            "Inspecting DNS cache",
+            "Verifying DNS propagation",
+            "Running Wireshark capture on DNS traffic",
+            "Checking firewall rules for DNS ports",
+            "Investigating potential DNS hijacking",
+            "Analyzing DNS query patterns",
+            "Verifying DNS record consistency across servers"
+        ];
+
+        const fixActions = [
+            "Restarting DNS server",
+            "Flushing DNS cache",
+            "Updating DNS records",
+            "Configuring DNS forwarders",
+            "Implementing DNSSEC",
+            "Optimizing DNS query handling",
+            "Setting up DNS load balancing",
+            "Configuring split-horizon DNS",
+            "Implementing DNS security extensions",
+            "Updating DNS software to latest version"
+        ];
+
+        const escalateActions = [
+            "Contacting senior DNS administrator",
+            "Opening ticket with DNS provider",
+            "Escalating to network operations center",
+            "Consulting DNS working group",
+            "Initiating emergency response protocol",
+            "Engaging vendor support for DNS software",
+            "Assembling cross-functional DNS task force",
+            "Escalating to cybersecurity team for potential DNS attack",
+            "Initiating DNS infrastructure review",
+            "Calling emergency meeting with network architects"
+        ];
+
+        let currentProblem = null;
         let problemsSolved = 0;
         let xp = 0;
         let currentLevel = 0;
@@ -166,44 +190,72 @@
 
         function newProblem() {
             currentProblem = getRandomElement(problems);
-            document.getElementById('problemDisplay').textContent = `Current Issue: ${currentProblem}`;
-            logToTerminal("New problem detected: " + currentProblem);
+            document.getElementById('problemDisplay').textContent = `Current Issue: ${currentProblem.name}`;
+            logToTerminal("New problem detected: " + currentProblem.name);
         }
 
         function diagnose() {
-            const diagnosisResult = Math.random() < 0.7 ? "Diagnosis successful" : "Diagnosis inconclusive";
-            logToTerminal(diagnosisResult + ": " + getRandomElement([
-                "Checked DNS server logs",
-                "Performed nslookup",
-                "Analyzed BIND configuration",
-                "Inspected DNS cache",
-                "Verified DNS propagation"
-            ]));
+            const action = getRandomElement(diagnoseActions);
+            const successRate = 0.7 - (currentProblem.difficulty * 0.1);
+            const success = Math.random() < successRate;
+            
+            logToTerminal(`Diagnosis action: ${action}`);
+            
+            if (success) {
+                logToTerminal("Diagnosis successful: " + getRandomElement([
+                    "Issue isolated to primary DNS server",
+                    "Detected misconfiguration in zone file",
+                    "Identified network connectivity problem",
+                    "Found outdated DNS records",
+                    "Discovered unauthorized DNS changes"
+                ]));
+                xp += 5;
+            } else {
+                logToTerminal("Diagnosis inconclusive. Further investigation required.");
+                xp += 2;
+            }
+            updateStats();
         }
 
         function attemptFix() {
-            const fixSuccess = Math.random() < 0.5;
-            if (fixSuccess) {
+            const action = getRandomElement(fixActions);
+            const successRate = 0.6 - (currentProblem.difficulty * 0.08);
+            const success = Math.random() < successRate;
+            
+            logToTerminal(`Attempting fix: ${action}`);
+            
+            if (success) {
                 problemsSolved++;
-                xp += 10;
-                logToTerminal("Fix successful! Issue resolved: " + currentProblem);
+                xp += 10 + (currentProblem.difficulty * 2);
+                logToTerminal(`Fix successful! ${currentProblem.name} resolved.`);
                 newProblem();
             } else {
-                logToTerminal("Fix attempt failed. Perhaps try diagnosing further or escalating.");
+                logToTerminal("Fix attempt failed. Consider trying a different approach or escalating.");
+                xp += 3;
             }
             updateStats();
         }
 
         function escalate() {
-            const escalationResult = Math.random() < 0.8 ? "Escalation successful" : "Escalation pending";
-            logToTerminal(escalationResult + ": " + getRandomElement([
-                "Contacted senior DNS administrator",
-                "Opened ticket with DNS provider",
-                "Escalated to network operations center",
-                "Consulted DNS working group",
-                "Initiated emergency response protocol"
-            ]));
-            xp += 5;
+            const action = getRandomElement(escalateActions);
+            const successRate = 0.8;
+            const success = Math.random() < successRate;
+            
+            logToTerminal(`Escalation action: ${action}`);
+            
+            if (success) {
+                logToTerminal("Escalation successful: " + getRandomElement([
+                    "Senior team now investigating the issue",
+                    "Vendor support engaged for advanced troubleshooting",
+                    "Emergency protocol initiated for critical DNS resolution",
+                    "Task force assembled to address the problem",
+                    "Cybersecurity team analyzing potential DNS-based attack"
+                ]));
+                xp += 7 + (currentProblem.difficulty * 1);
+            } else {
+                logToTerminal("Escalation pending. Await further instructions from upper management.");
+                xp += 4;
+            }
             updateStats();
         }
 
