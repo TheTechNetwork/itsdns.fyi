@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>It's Always DNS</title>
+    <title>It's Always DNS - Troubleshooting Simulator</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -32,7 +32,7 @@
             text-shadow: 0 0 10px #00ff00;
         }
         #problemDisplay {
-            font-size: 2em;
+            font-size: 1.8em;
             margin-bottom: 30px;
             min-height: 2.5em;
             text-shadow: 0 0 5px #00ff00;
@@ -93,144 +93,139 @@
             font-size: 1.2em;
             margin-top: 20px;
         }
+        #actionButtons {
+            display: none;
+        }
+        #levelDisplay {
+            font-size: 1.5em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #terminal {
+            background-color: #001100;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: left;
+            height: 150px;
+            overflow-y: auto;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
     <canvas class="matrix-bg" id="matrixCanvas"></canvas>
     <div class="container">
-        <h1 id="mainTitle">What's the problem?</h1>
-        <div id="problemDisplay">Initializing DNS troubleshooter...</div>
-        <button onclick="revealProblem()">Diagnose</button>
-        <button onclick="attemptFix()">Attempt Fix</button>
-        <div id="dnsArt"></div>
-        <div id="statsDisplay">Problems Diagnosed: 0 | Fixes Attempted: 0 | Success Rate: 0%</div>
+        <h1 id="mainTitle">DNS Troubleshooting Simulator</h1>
+        <div id="levelDisplay">Level 1: DNS Novice</div>
+        <div id="problemDisplay">Ready to tackle some DNS issues?</div>
+        <button id="startButton" onclick="startSimulation()">Start Simulation</button>
+        <div id="actionButtons">
+            <button onclick="diagnose()">Diagnose</button>
+            <button onclick="attemptFix()">Attempt Fix</button>
+            <button onclick="escalate()">Escalate</button>
+        </div>
+        <div id="terminal"></div>
+        <div id="statsDisplay">Problems Solved: 0 | XP: 0</div>
         <div id="progressBar"></div>
     </div>
 
     <script>
         const problems = [
-            "It's DNS, obviously!",
-            "Have you tried turning DNS off and on again?",
-            "DNS: Because someone has to be the fall guy",
-            "Error 53: DNS ate my homework",
-            "DNS: The silent killer of productivity",
-            "Breaking News: Local DNS server goes rogue, thousands of queries stranded",
-            "Plot twist: It was DNS all along",
-            "In a world where everything works... except DNS",
-            "DNS: Making network admins cry since 1983",
-            "Error 404: DNS not found... Oh wait.",
-            "DNS: Because 'It works on my machine' needed a friend",
-            "Keep Calm and Blame DNS",
-            "I don't always test my code, but when I do, I blame DNS",
-            "DNS: The reason your coffee went cold",
-            "Schrödinger's DNS: It's both working and not working until you observe it",
-            "DNS: The unsung villain of every IT horror story",
-            "Error 418: I'm a teapot. Just kidding, it's DNS again",
-            "DNS: Turning 'Quick fixes' into all-nighters since forever",
-            "In the criminal justice system, DNS-based offenses are considered especially heinous",
-            "DNS: Because someone has to keep the coffee industry in business",
-            "DNS: The only constant in a world of variables",
-            "Error 53110: DNS has become self-aware. Run.",
-            "DNS: Making 'It works on my machine' a universal truth",
-            "The first rule of IT Club: It's always DNS",
-            "DNS: Because network troubleshooting needed a final boss"
+            "DNS server not responding",
+            "NXDOMAIN errors for valid domains",
+            "Slow DNS resolution",
+            "Intermittent DNS failures",
+            "DNS cache poisoning detected",
+            "Reverse DNS lookup failing",
+            "DNS zone transfer issues",
+            "DNSSEC validation errors",
+            "DNS amplification attack in progress",
+            "Split-horizon DNS misconfiguration"
         ];
 
-        const titles = [
-            "What's the problem?",
-            "DNS Diagnosis Center",
-            "The Root of All Evil",
-            "Network Troubleshooter",
-            "Why Is It Always DNS?",
-            "The DNS Dilemma",
-            "Abandon All Hope, Ye Who Enter",
-            "DNS: The Final Frontier",
-            "Welcome to DNS Hell",
-            "The Neverending Query"
+        const levels = [
+            "DNS Novice",
+            "DNS Apprentice",
+            "DNS Journeyman",
+            "DNS Expert",
+            "DNS Master",
+            "Legendary DNS Whisperer"
         ];
 
-        const asciiArts = [
-            ` _____  _   _  _____ 
-|  __ \\| \\ | |/ ____|
-| |  | |  \\| | (___  
-| |  | | . \` |\\___ \\ 
-| |__| | |\\  |____) |
-|_____/|_| \\_|_____/ `,
-            `______ _   _ _____ 
-|  _  \\ | | /  ___|
-| | | | | | \\ \`--.
-| | | | | | |\`--. \\
-| |/ /| |_| /\\__/ /
-|___/  \\___/\\____/ `,
-            ` ____ ____ ____ 
-||D |||N |||S ||
-||__|||__|||__||
-|/__\\|/__\\|/__\\|`,
-            `+-----+
-|  D  |
-|N   S|
-+-----+`,
-            `/\\ \\   //\\
-\\ \\ \\ // /   _____ _   _ _____ 
- \\ \\V/ /   |  __ \\ | | /  ___|
-  \\_/\\_/    | |  | | | | \\___ 
-  /   \\     | |  | | | |  ___) |
- / DNS \\    | |__| |_| | |____/ 
-/       \\   |_____/|___/\\_____/`
-        ];
+        let currentProblem = "";
+        let problemsSolved = 0;
+        let xp = 0;
+        let currentLevel = 0;
 
-        let problemsDiagnosed = 0;
-        let fixesAttempted = 0;
-        let fixesSucceeded = 0;
-
-        function getRandomElement(array) {
-            return array[Math.floor(Math.random() * array.length)];
+        function startSimulation() {
+            document.getElementById('startButton').style.display = 'none';
+            document.getElementById('actionButtons').style.display = 'block';
+            newProblem();
         }
 
-        function setRandomTitle() {
-            document.getElementById('mainTitle').textContent = getRandomElement(titles);
+        function newProblem() {
+            currentProblem = getRandomElement(problems);
+            document.getElementById('problemDisplay').textContent = `Current Issue: ${currentProblem}`;
+            logToTerminal("New problem detected: " + currentProblem);
         }
 
-        function setRandomAsciiArt() {
-            document.getElementById('dnsArt').textContent = getRandomElement(asciiArts);
-        }
-
-        function revealProblem() {
-            const problemDisplay = document.getElementById('problemDisplay');
-            problemDisplay.textContent = getRandomElement(problems);
-            
-            problemDisplay.style.animation = 'none';
-            problemDisplay.offsetHeight; // Trigger reflow
-            problemDisplay.style.animation = 'glitch 0.3s linear';
-
-            problemsDiagnosed++;
-            updateStats();
+        function diagnose() {
+            const diagnosisResult = Math.random() < 0.7 ? "Diagnosis successful" : "Diagnosis inconclusive";
+            logToTerminal(diagnosisResult + ": " + getRandomElement([
+                "Checked DNS server logs",
+                "Performed nslookup",
+                "Analyzed BIND configuration",
+                "Inspected DNS cache",
+                "Verified DNS propagation"
+            ]));
         }
 
         function attemptFix() {
-            fixesAttempted++;
-            const success = Math.random() < 0.5; // 50% chance of success
-            if (success) {
-                fixesSucceeded++;
-                document.getElementById('problemDisplay').textContent = "Fix successful! ...until the next DNS problem.";
+            const fixSuccess = Math.random() < 0.5;
+            if (fixSuccess) {
+                problemsSolved++;
+                xp += 10;
+                logToTerminal("Fix successful! Issue resolved: " + currentProblem);
+                newProblem();
             } else {
-                document.getElementById('problemDisplay').textContent = "Fix failed. Have you tried turning it off and on again?";
+                logToTerminal("Fix attempt failed. Perhaps try diagnosing further or escalating.");
             }
+            updateStats();
+        }
+
+        function escalate() {
+            const escalationResult = Math.random() < 0.8 ? "Escalation successful" : "Escalation pending";
+            logToTerminal(escalationResult + ": " + getRandomElement([
+                "Contacted senior DNS administrator",
+                "Opened ticket with DNS provider",
+                "Escalated to network operations center",
+                "Consulted DNS working group",
+                "Initiated emergency response protocol"
+            ]));
+            xp += 5;
             updateStats();
         }
 
         function updateStats() {
-            const successRate = fixesAttempted > 0 ? (fixesSucceeded / fixesAttempted * 100).toFixed(1) : 0;
-            document.getElementById('statsDisplay').textContent = 
-                `Problems Diagnosed: ${problemsDiagnosed} | Fixes Attempted: ${fixesAttempted} | Success Rate: ${successRate}%`;
-            
-            // Update progress bar
-            const progress = (problemsDiagnosed % 10) * 10; // Reset every 10 diagnoses
-            document.getElementById('progressBar').style.width = `${progress}%`;
-            
-            if (problemsDiagnosed % 10 === 0 && problemsDiagnosed > 0) {
-                alert(`Congratulations! You've diagnosed ${problemsDiagnosed} DNS problems. You're a true IT hero!`);
+            document.getElementById('statsDisplay').textContent = `Problems Solved: ${problemsSolved} | XP: ${xp}`;
+            const newLevel = Math.min(Math.floor(xp / 50), levels.length - 1);
+            if (newLevel > currentLevel) {
+                currentLevel = newLevel;
+                document.getElementById('levelDisplay').textContent = `Level ${currentLevel + 1}: ${levels[currentLevel]}`;
+                logToTerminal(`Congratulations! You've been promoted to ${levels[currentLevel]}!`);
             }
+            document.getElementById('progressBar').style.width = `${(xp % 50) * 2}%`;
+        }
+
+        function logToTerminal(message) {
+            const terminal = document.getElementById('terminal');
+            terminal.innerHTML += `> ${message}<br>`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
         }
 
         // Matrix rain effect
@@ -268,16 +263,6 @@
         }
 
         setInterval(draw, 33);
-
-        // Initialize random elements
-        setRandomTitle();
-        setRandomAsciiArt();
-
-        // Change title and ASCII art periodically
-        setInterval(() => {
-            setRandomTitle();
-            setRandomAsciiArt();
-        }, 10000); // Every 10 seconds
     </script>
 </body>
 </html>
