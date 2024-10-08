@@ -9,7 +9,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         { name: "Split-horizon DNS confused about which parallel universe it's in", difficulty: 4 },
         { name: "DNSSEC validation errors because keys are questioning their purpose in life", difficulty: 4 },
         { name: "DNS queries being intercepted by a rogue AI convinced it's the 'true' DNS", difficulty: 5 },
-        { name: "Zone transfer issues: primary DNS server ghosted the secondary and eloped with a load balancer", difficulty: 3 }
+        { name: "Zone transfer issues: primary DNS server ghosted the secondary and eloped with a load balancer", difficulty: 3 },
+        { name: "DNS server suffering from imposter syndrome, keeps returning 127.0.0.1", difficulty: 2 },
+        { name: "TTL values fluctuating based on server's mood swings", difficulty: 3 },
+        { name: "Root servers decided to form a union and go on strike", difficulty: 5 },
+        { name: "DNS packets lost in the Bermuda Triangle of the internet", difficulty: 4 },
+        { name: "Recursive resolver stuck in an infinite loop of self-discovery", difficulty: 3 }
     ];
 
     const levels = [
@@ -18,7 +23,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         "Query Quester (Questioning Reality)",
         "Resolution Rogue (Embracing Chaos)",
         "Nameserver Ninja (Master of Illusions)",
-        "Legendary DNS Whisperer (Clinically Insane)"
+        "Legendary DNS Whisperer (Clinically Insane)",
+        "Ethereal IP Enchanter (Beyond Mortal Comprehension)",
+        "Quantum Query Queller (Schrödinger's DNS)",
+        "Omniscient Octet Oracle (All-Knowing, All-Debugging)",
+        "Transcendent TLD Tamer (Ascended Beyond Protocols)"
     ];
 
     const lightThemeMessages = [
@@ -71,7 +80,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         { name: "Perform nslookup", description: "Ask the DNS oracle for wisdom." },
         { name: "Verify network connectivity", description: "Ensure the tubes are properly connected." },
         { name: "Check firewall rules", description: "Navigate the labyrinth of security paranoia." },
-        { name: "Analyze packet captures", description: "Spy on the secret life of packets." }
+        { name: "Analyze packet captures", description: "Spy on the secret life of packets." },
+        { name: "Consult the DNS ouija board", description: "Commune with the spirits of long-dead packets." },
+        { name: "Perform a DNS rain dance", description: "Appease the weather gods of the internet." },
+        { name: "Debug with interpretive dance", description: "Express your frustration through the art of movement." },
+        { name: "Threaten the DNS server", description: "Sometimes intimidation is the best motivation." },
+        { name: "Conduct a séance for lost packets", description: "Attempt to contact the other side... of the network." }
     ];
 
     const fixOptions = [
@@ -79,18 +93,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
         { name: "Update DNS records", description: "Play 'find and replace' with the fabric of the internet." },
         { name: "Flush DNS cache", description: "Give your DNS a digital laxative." },
         { name: "Reconfigure DNS servers", description: "Rearrange the deck chairs on the Titanic." },
-        { name: "Perform zone transfer", description: "Initiate the great migration of DNS data." }
+        { name: "Perform zone transfer", description: "Initiate the great migration of DNS data." },
+        { name: "Sacrifice a router to the RFC gods", description: "Appease the deities of networking standards." },
+        { name: "Apply DNS duct tape", description: "When in doubt, duct tape it out." },
+        { name: "Perform DNS yoga", description: "Align your chakras with your IP addresses." },
+        { name: "Initiate quantum entanglement", description: "Because normal networking is too mainstream." },
+        { name: "Deploy carrier pigeons as backup", description: "RFC 1149 to the rescue!" }
     ];
 
     const escalateOptions = [
         { name: "Call the network team", description: "Unleash chaos upon another department." },
         { name: "Summon the DNS elders", description: "Attempt to commune with the ancients of the internet." },
-        { name: "Sacrifice a router to the RFC gods", description: "Appease the deities of networking standards." },
         { name: "Initiate emergency change request", description: "Brave the perilous waters of corporate bureaucracy." },
-        { name: "Convene a war room meeting", description: "Gather the troops for a symphony of finger-pointing." }
+        { name: "Convene a war room meeting", description: "Gather the troops for a symphony of finger-pointing." },
+        { name: "Escalate to the cloud", description: "Because problems always look smaller from far away." },
+        { name: "Blame it on solar flares", description: "When in doubt, it's always the sun's fault." },
+        { name: "Invoke the SLA clause", description: "Time to read the fine print of that contract." },
+        { name: "Declare DNS bankruptcy", description: "Sometimes, you just need to start over." },
+        { name: "Summon the IT crowd", description: "Have you tried turning it off and on again?" },
+        { name: "Retreat to a remote cave", description: "Sometimes the best solution is to go off the grid." }
     ];
 
     let currentProblem = null, problemsSolved = 0, xp = 0, currentLevel = 0, coffeeConsumed = 0;
+
+    function getRandomElements(array, count) {
+        const shuffled = array.sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    }
 
     function logToTerminal(message) {
         const terminal = document.getElementById('terminal');
@@ -111,7 +140,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById('problemDisplay').textContent = `Current Crisis: ${currentProblem.name}`;
         logToTerminal("New DNS catastrophe detected: " + currentProblem.name);
         logToTerminal(getRandomElement(jokes));
-        coffeeConsumed++;
+        coffeeConsumed += Math.floor(Math.random() * 3) + 1;
     }
 
     function showOptions(type) {
@@ -119,7 +148,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         type === 'fix' ? fixOptions : escalateOptions;
         const container = document.getElementById(`${type}Options`);
         container.innerHTML = '';
-        options.forEach(option => {
+        getRandomElements(options, 5).forEach(option => {
             const button = document.createElement('button');
             button.textContent = option.name;
             button.onclick = () => performSpecificAction(type, option);
@@ -128,7 +157,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.querySelectorAll('.option-buttons').forEach(el => el.style.display = 'none');
         container.style.display = 'flex';
         
-        // Hide main action buttons and show back button
         document.getElementById('actionButtons').style.display = 'none';
         document.getElementById('backButton').style.display = 'block';
     }
@@ -145,8 +173,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById('actionDescription').textContent = option.description;
         
         let success = Math.random() < (0.7 - currentProblem.difficulty * 0.1);
-        let xpGain = success ? 5 + currentProblem.difficulty : 2;
-        let message = success ? `${type} successful!` : `${type} failed.`;
+        let xpGain = success ? Math.floor(Math.random() * 5) + 5 + currentProblem.difficulty : Math.floor(Math.random() * 3) + 1;
+        let message = success ? `${type} successful! You feel ${getRandomElement(['enlightened', 'confused', 'accomplished', 'perplexed', 'victorious', 'bewildered'])}.` : `${type} failed. You feel ${getRandomElement(['deflated', 'determined', 'frustrated', 'amused', 'caffeinated', 'existential'])}.`;
         logToTerminal(message);
         
         if (!success) {
@@ -169,7 +197,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (newLevel > currentLevel) {
             currentLevel = newLevel;
             document.getElementById('levelDisplay').textContent = `Level ${currentLevel + 1}: ${levels[currentLevel]}`;
-            logToTerminal(`Promoted to ${levels[currentLevel]}!`);
+            logToTerminal(`Promoted to ${levels[currentLevel]}! Your DNS powers have reached new heights of absurdity.`);
             logToTerminal(getRandomElement(jokes));
         }
         document.getElementById('progressBar').style.width = `${(xp % 50) * 2}%`;
