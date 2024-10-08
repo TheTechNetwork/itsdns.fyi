@@ -103,12 +103,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
         welcomeBack.style.top = '50%';
         welcomeBack.style.left = '50%';
         welcomeBack.style.transform = 'translate(-50%, -50%)';
-        welcomeBack.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+        welcomeBack.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
         welcomeBack.style.color = '#00ff00';
         welcomeBack.style.padding = '20px';
         welcomeBack.style.borderRadius = '10px';
-        welcomeBack.style.fontSize = '24px';
+        welcomeBack.style.fontSize = '28px';
+        welcomeBack.style.fontWeight = 'bold';
         welcomeBack.style.zIndex = '1000';
+        welcomeBack.style.boxShadow = '0 0 20px #00ff00';
+        welcomeBack.style.textShadow = '0 0 5px #00ff00';
         document.body.appendChild(welcomeBack);
 
         setTimeout(() => {
