@@ -37,6 +37,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
         "Darkness falls... and your troubleshooting skills rise!"
     ];
 
+    const lightThemeLogMessages = [
+        "User chose to remain in the blinding light. DNS powers weakened.",
+        "Embracing the light side. May your GUI be with you.",
+        "Brightness intensifies. DNS troubleshooting effectiveness decreased.",
+        "User has chosen the path of illumination. Squinting commences.",
+        "Light theme activated. Sunglasses recommended for further troubleshooting."
+    ];
+
+    const darkThemeLogMessages = [
+        "User wisely returned to the dark side. DNS powers restored!",
+        "Darkness engulfs the user. DNS mastery intensifies.",
+        "Back to the shadows. Your terminal approves.",
+        "Dark theme reactivated. DNS packets flow freely once more.",
+        "Embracing the void. Your troubleshooting powers grow stronger."
+    ];
+
     let currentProblem = null, problemsSolved = 0, xp = 0, currentLevel = 0, coffeeConsumed = 0;
 
     function logToTerminal(message) {
@@ -103,14 +119,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.body.classList.add('light-theme');
         updateMatrixColors();
         document.getElementById('lightThemeMessage').style.display = 'none';
-        logToTerminal("User chose to remain in the blinding light. DNS powers weakened.");
+        logToTerminal(getRandomElement(lightThemeLogMessages));
     }
 
     function applyDarkTheme() {
         document.body.classList.remove('light-theme');
         updateMatrixColors();
         document.getElementById('lightThemeMessage').style.display = 'none';
-        logToTerminal("User wisely returned to the dark side. DNS powers restored!");
+        logToTerminal(getRandomElement(darkThemeLogMessages));
         showWelcomeBackMessage();
     }
 
