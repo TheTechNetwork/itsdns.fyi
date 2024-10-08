@@ -152,6 +152,25 @@
         #lightThemeMessage button {
             margin-top: 10px;
         }
+        .option-buttons {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .option-buttons button {
+            margin: 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+        #actionDescription {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        #backButton {
+            display: none;
+            margin-top: 10px;
+        }
 
         @media (max-width: 600px) {
             h1 {
@@ -189,6 +208,11 @@
             <button id="fixButton">Fix (Tempt Fate)</button>
             <button id="escalateButton">Escalate (Spread Misery)</button>
         </div>
+        <div id="diagnoseOptions" class="option-buttons"></div>
+        <div id="fixOptions" class="option-buttons"></div>
+        <div id="escalateOptions" class="option-buttons"></div>
+        <button id="backButton">Back to Main Menu</button>
+        <div id="actionDescription"></div>
         <div id="terminal"></div>
         <div id="statsDisplay">Problems "Solved": 0 | Despair Points: 0 | Coffee Consumed: 0</div>
         <div id="progressBar"></div>
