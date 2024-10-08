@@ -127,6 +127,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
         document.querySelectorAll('.option-buttons').forEach(el => el.style.display = 'none');
         container.style.display = 'flex';
+        
+        // Hide main action buttons and show back button
+        document.getElementById('actionButtons').style.display = 'none';
+        document.getElementById('backButton').style.display = 'block';
+    }
+
+    function showMainMenu() {
+        document.querySelectorAll('.option-buttons').forEach(el => el.style.display = 'none');
+        document.getElementById('actionButtons').style.display = 'flex';
+        document.getElementById('backButton').style.display = 'none';
+        document.getElementById('actionDescription').textContent = '';
     }
 
     function performSpecificAction(type, option) {
@@ -235,6 +246,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('diagnoseButton').addEventListener('click', () => showOptions('diagnose'));
     document.getElementById('fixButton').addEventListener('click', () => showOptions('fix'));
     document.getElementById('escalateButton').addEventListener('click', () => showOptions('escalate'));
+    document.getElementById('backButton').addEventListener('click', showMainMenu);
     document.getElementById('keepLightTheme').addEventListener('click', applyLightTheme);
     document.getElementById('revertToDarkTheme').addEventListener('click', applyDarkTheme);
 
