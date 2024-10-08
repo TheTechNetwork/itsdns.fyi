@@ -91,7 +91,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function applyDarkTheme() {
         document.body.classList.remove('light-theme');
         updateMatrixColors();
+        document.getElementById('lightThemeMessage').style.display = 'none';
         logToTerminal("User wisely returned to the dark side. DNS powers restored!");
+        showWelcomeBackMessage();
+    }
+
+    function showWelcomeBackMessage() {
+        const welcomeBack = document.createElement('div');
+        welcomeBack.textContent = "Welcome back to the dark side!";
+        welcomeBack.style.position = 'fixed';
+        welcomeBack.style.top = '50%';
+        welcomeBack.style.left = '50%';
+        welcomeBack.style.transform = 'translate(-50%, -50%)';
+        welcomeBack.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+        welcomeBack.style.color = '#00ff00';
+        welcomeBack.style.padding = '20px';
+        welcomeBack.style.borderRadius = '10px';
+        welcomeBack.style.fontSize = '24px';
+        welcomeBack.style.zIndex = '1000';
+        document.body.appendChild(welcomeBack);
+
+        setTimeout(() => {
+            welcomeBack.style.transition = 'opacity 1s';
+            welcomeBack.style.opacity = '0';
+            setTimeout(() => welcomeBack.remove(), 1000);
+        }, 2000);
     }
 
     function updateMatrixColors() {
