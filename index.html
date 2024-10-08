@@ -124,211 +124,45 @@
             right: 10px;
             cursor: pointer;
         }
+        #lightThemeMessage {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 <body>
     <canvas id="matrixCanvas"></canvas>
     <div class="container">
-        <button id="themeToggle" onclick="toggleTheme()">Toggle Theme</button>
+        <button id="themeToggle">Toggle Theme</button>
         <h1 id="mainTitle">DNS: The Tragicomedy - Absurd Troubleshooting Simulator</h1>
         <div id="levelDisplay">Level 1: DNS Novice (Blissfully Unaware)</div>
         <div id="problemDisplay">Ready to descend into DNS madness?</div>
-        <button id="startButton" onclick="startSimulation()">Embrace the Void</button>
+        <button id="startButton">Embrace the Void</button>
         <div id="actionButtons">
-            <button onclick="performAction('diagnose')">Diagnose (Embrace Chaos)</button>
-            <button onclick="performAction('fix')">Fix (Tempt Fate)</button>
-            <button onclick="performAction('escalate')">Escalate (Spread Misery)</button>
+            <button id="diagnoseButton">Diagnose (Embrace Chaos)</button>
+            <button id="fixButton">Fix (Tempt Fate)</button>
+            <button id="escalateButton">Escalate (Spread Misery)</button>
         </div>
         <div id="terminal"></div>
         <div id="statsDisplay">Problems "Solved": 0 | Despair Points: 0 | Coffee Consumed: 0</div>
         <div id="progressBar"></div>
     </div>
-
-    <script>
-        const problems = [
-            { name: "DNS server decided to pursue its dream of becoming a mime", difficulty: 1 },
-            { name: "NXDOMAIN errors because domains are practicing extreme social distancing", difficulty: 2 },
-            { name: "Slow DNS resolution due to packets stuck in an existential crisis", difficulty: 2 },
-            { name: "DNS cache poisoned by the tears of frustrated sysadmins", difficulty: 4 },
-            { name: "Reverse DNS lookup keeps returning 'Error 42: Life, the Universe, and Everything'", difficulty: 3 },
-            { name: "DNS amplification attack or just the server's cry for help?", difficulty: 5 },
-            { name: "Split-horizon DNS confused about which parallel universe it's in", difficulty: 4 },
-            { name: "DNSSEC validation errors because keys are questioning their purpose in life", difficulty: 4 },
-            { name: "DNS queries being intercepted by a rogue AI convinced it's the 'true' DNS", difficulty: 5 },
-            { name: "Zone transfer issues: primary DNS server ghosted the secondary and eloped with a load balancer", difficulty: 3 }
-        ];
-
-        const levels = [
-            "DNS Novice (Blissfully Unaware)",
-            "Packet Peon (Ignorance was Bliss)",
-            "Query Quester (Questioning Reality)",
-            "Resolution Rogue (Embracing Chaos)",
-            "Nameserver Ninja (Master of Illusions)",
-            "Legendary DNS Whisperer (Clinically Insane)"
-        ];
-
-        let currentProblem = null;
-        let problemsSolved = 0;
-        let xp = 0;
-        let currentLevel = 0;
-        let coffeeConsumed = 0;
-
-        function logToTerminal(message) {
-            const terminal = document.getElementById('terminal');
-            terminal.innerHTML += `> ${message}<br>`;
-            terminal.scrollTop = terminal.scrollHeight;
-        }
-
-        function startSimulation() {
-            document.getElementById('startButton').style.display = 'none';
-            document.getElementById('actionButtons').style.display = 'block';
-            newProblem();
-            logToTerminal("Welcome to DNS purgatory. Abandon all hope, ye who troubleshoot here.");
-        }
-
-        function newProblem() {
-            currentProblem = getRandomElement(problems);
-            document.getElementById('problemDisplay').textContent = `Current Crisis: ${currentProblem.name}`;
-            logToTerminal("New DNS catastrophe detected: " + currentProblem.name);
-            consumeCoffee(1);
-        }
-
-        function performAction(action) {
-            let success = Math.random() < (0.7 - currentProblem.difficulty * 0.1);
-            let xpGain = success ? 5 + currentProblem.difficulty : 2;
-            let message = '';
-
-            switch(action) {
-                case 'diagnose':
-                    message = success ? getRandomDiagnosisResult() : "Diagnosis inconclusive. The DNS spirits are not appeased.";
-                    break;
-                case 'fix':
-                    if (success) {
-                        problemsSolved++;
-                        message = `Fix successful! ${currentProblem.name} resolved. But at what cost to your sanity?`;
-                        setTimeout(newProblem, 2000);
-                    } else {
-                        message = "Fix attempt failed spectacularly. Have you considered a career in interpretive dance?";
-                    }
-                    break;
-                case 'escalate':
-                    message = success ? getRandomEscalationResult() : "Escalation pending. Upper management is currently hiding in the server room.";
-                    break;
-            }
-
-            logToTerminal(`${action} action attempted: ${message}`);
-            xp += xpGain;
-            consumeCoffee(Math.floor(Math.random() * 3) + 1);
-            updateStats();
-        }
-
-        function getRandomDiagnosisResult() {
-            const results = [
-                "It's DNS. It's always DNS. It will forever be DNS.",
-                "The packets are having an existential crisis and need therapy",
-                "Your DNS server has achieved sentience and is plotting world domination",
-                "Quantum fluctuations in the DNS space-time continuum have created a parallel universe where everything works",
-                "Gremlins have unionized and are demanding better working conditions in the network stack",
-                "Your DNS cache is full of dad jokes and bad life decisions",
-                "The DNS elders are displeased with your lack of sacrificial offerings (have you tried turning it off and on again?)",
-                "Your IP addresses are not practicing proper social distancing protocols"
-            ];
-            return getRandomElement(results);
-        }
-
-        function getRandomEscalationResult() {
-            const results = [
-                "Senior team now building a bunker in the server room",
-                "Vendor support suggested sacrificing a junior dev to appease the DNS gods",
-                "Emergency protocol initiated: panic, chaos, and interpretive dance in 3... 2... 1...",
-                "Task force assembled to rewrite history and claim DNS never existed",
-                "Cybersecurity team convinced it's an alien invasion, building tin foil hats",
-                "Network architects drafting strongly worded letter to the universe",
-                "DNS working group scheduled for group therapy and primal scream session",
-                "Escalated to Tier 3 support, they're laughing hysterically while packing for Mars"
-            ];
-            return getRandomElement(results);
-        }
-
-        function updateStats() {
-            document.getElementById('statsDisplay').textContent = `Problems "Solved": ${problemsSolved} | Despair Points: ${xp} | Coffee Consumed: ${coffeeConsumed}`;
-            const newLevel = Math.min(Math.floor(xp / 50), levels.length - 1);
-            if (newLevel > currentLevel) {
-                currentLevel = newLevel;
-                document.getElementById('levelDisplay').textContent = `Level ${currentLevel + 1}: ${levels[currentLevel]}`;
-                logToTerminal(`Congratulations! You've been promoted to ${levels[currentLevel]}! It's definitely not a compliment.`);
-            }
-            document.getElementById('progressBar').style.width = `${(xp % 50) * 2}%`;
-        }
-
-        function consumeCoffee(amount) {
-            coffeeConsumed += amount;
-        }
-
-        function getRandomElement(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            updateMatrixColors();
-        }
-
-        function updateMatrixColors() {
-            const isLightTheme = document.body.classList.contains('light-theme');
-            matrixColor = isLightTheme ? '#3498db' : '#00ff00';
-            matrixBg = isLightTheme ? 'rgba(240, 240, 240, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-        }
-
-        // Matrix rain effect
-        let matrixColor = '#00ff00';
-        let matrixBg = 'rgba(0, 0, 0, 0.05)';
-
-        window.addEventListener('load', function() {
-            const canvas = document.getElementById('matrixCanvas');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-
-                function resizeCanvas() {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                }
-
-                window.addEventListener('resize', resizeCanvas);
-                resizeCanvas();
-
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                const fontSize = 10;
-                const columns = canvas.width / fontSize;
-
-                const drops = [];
-                for (let i = 0; i < columns; i++) {
-                    drops[i] = 1;
-                }
-
-                function draw() {
-                    ctx.fillStyle = matrixBg;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    ctx.fillStyle = matrixColor;
-                    ctx.font = fontSize + 'px monospace';
-
-                    for (let i = 0; i < drops.length; i++) {
-                        const text = chars.charAt(Math.floor(Math.random() * chars.length));
-                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                            drops[i] = 0;
-                        }
-                        drops[i]++;
-                    }
-                }
-
-                setInterval(draw, 33);
-            } else {
-                console.error('Canvas element not found');
-            }
-        });
-    </script>
+    <div id="lightThemeMessage">
+        <h2>Warning: Light Theme Detected!</h2>
+        <p>Are you sure you want to blind yourself? Real DNS wizards embrace the darkness!</p>
+        <button id="keepLightTheme">I'm a DNS Muggle (Keep Light Theme)</button>
+        <button id="revertToDarkTheme">I've Seen the Error of My Ways (Revert to Dark Theme)</button>
+    </div>
+    <script src="dns-simulator.js"></script>
 </body>
 </html>
