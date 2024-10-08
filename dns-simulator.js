@@ -69,10 +69,35 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function toggleTheme() {
-        const isLightTheme = document.body.classList.toggle('light-theme');
-        if (isLightTheme) {
-            document.getElementById('lightThemeMessage').style.display = 'block';
+        const isCurrentlyDark = !document.body.classList.contains('light-theme');
+        if (isCurrentlyDark) {
+            showLightThemeMessage();
+        } else {
+            applyDarkTheme();
         }
+    }
+
+    function showLightThemeMessage() {
+        document.getElementById('lightThemeMessage').style.display = 'block';
+    }
+
+    function applyLightTheme() {
+        document.body.classList.add('light-theme');
+        updateMatrixColors();
+        document.getElementById('lightThemeMessage').style.display = 'none';
+        logToTerminal("User chose to remain in the blinding light. DNS powers weakened.");
+    }
+
+    function applyDarkTheme() {
+        document.body.classList.remove('light-theme');
+        updateMatrixColors();
+        logToTerminal("User wisely returned to the dark side. DNS powers restored!");
+    }
+
+    function updateMatrixColors() {
+        const isLightTheme = document.body.classList.contains('light-theme');
+        matrixColor = isLightTheme ? '#3498db' : '#00ff00';
+        matrixBg = isLightTheme ? 'rgba(240, 240, 240, 0.05)' : 'rgba(0, 0, 0, 0.05)';
     }
 
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
@@ -80,13 +105,52 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('diagnoseButton').addEventListener('click', () => performAction('diagnose'));
     document.getElementById('fixButton').addEventListener('click', () => performAction('fix'));
     document.getElementById('escalateButton').addEventListener('click', () => performAction('escalate'));
-    document.getElementById('keepLightTheme').addEventListener('click', () => {
-        document.getElementById('lightThemeMessage').style.display = 'none';
-        logToTerminal("User chose to remain in the blinding light. DNS powers weakened.");
-    });
-    document.getElementById('revertToDarkTheme').addEventListener('click', () => {
-        document.body.classList.remove('light-theme');
-        document.getElementById('lightThemeMessage').style.display = 'none';
-        logToTerminal("User wisely returned to the dark side. DNS powers restored!");
-    });
+    document.getElementById('keepLightTheme').addEventListener('click', applyLightTheme);
+    document.getElementById('revertToDarkTheme').addEventListener('click', applyDarkTheme);
+
+    // Matrix rain effect
+    let matrixColor = '#00ff00';
+    let matrixBg = 'rgba(0, 0, 0, 0.05)';
+
+    const canvas = document.getElementById('matrixCanvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = matrixBg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = matrixColor;
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+    }
 });
