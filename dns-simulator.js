@@ -53,6 +53,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
         "Embracing the void. Your troubleshooting powers grow stronger."
     ];
 
+    const jokes = [
+        "Why don't DNS servers go to parties? They have too many cache rules!",
+        "How does a DNS server stay in shape? It does nameserver-cises!",
+        "What do you call a DNS lookup that takes forever? A re-curse-ive nightmare!",
+        "Why did the CNAME record break up with the A record? Too much indirection in the relationship!",
+        "What's a DNS admin's favorite dance? The zone transfer!",
+        "How does a DNS server introduce itself? 'Hi, I'm here to resolve your issues!'",
+        "Why was the DNS server feeling down? It had too many unresolved issues!",
+        "What's a DNS server's favorite game? Hide and seek with IP addresses!",
+        "Why did the DNS server go to therapy? It had trouble resolving its parent issues!",
+        "How do DNS servers communicate? Through root channels!"
+    ];
+
+    const diagnoseOptions = [
+        { name: "Check DNS server logs", description: "Dive into the abyss of cryptic log messages." },
+        { name: "Perform nslookup", description: "Ask the DNS oracle for wisdom." },
+        { name: "Verify network connectivity", description: "Ensure the tubes are properly connected." },
+        { name: "Check firewall rules", description: "Navigate the labyrinth of security paranoia." },
+        { name: "Analyze packet captures", description: "Spy on the secret life of packets." }
+    ];
+
+    const fixOptions = [
+        { name: "Restart DNS service", description: "The universal IT solution: turn it off and on again." },
+        { name: "Update DNS records", description: "Play 'find and replace' with the fabric of the internet." },
+        { name: "Flush DNS cache", description: "Give your DNS a digital laxative." },
+        { name: "Reconfigure DNS servers", description: "Rearrange the deck chairs on the Titanic." },
+        { name: "Perform zone transfer", description: "Initiate the great migration of DNS data." }
+    ];
+
+    const escalateOptions = [
+        { name: "Call the network team", description: "Unleash chaos upon another department." },
+        { name: "Summon the DNS elders", description: "Attempt to commune with the ancients of the internet." },
+        { name: "Sacrifice a router to the RFC gods", description: "Appease the deities of networking standards." },
+        { name: "Initiate emergency change request", description: "Brave the perilous waters of corporate bureaucracy." },
+        { name: "Convene a war room meeting", description: "Gather the troops for a symphony of finger-pointing." }
+    ];
+
     let currentProblem = null, problemsSolved = 0, xp = 0, currentLevel = 0, coffeeConsumed = 0;
 
     function logToTerminal(message) {
@@ -63,27 +100,53 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function startSimulation() {
         document.getElementById('startButton').style.display = 'none';
-        document.getElementById('actionButtons').style.display = 'block';
+        document.getElementById('actionButtons').style.display = 'flex';
         newProblem();
         logToTerminal("Welcome to DNS purgatory. Abandon all hope, ye who troubleshoot here.");
+        logToTerminal(getRandomElement(jokes));
     }
 
     function newProblem() {
         currentProblem = getRandomElement(problems);
         document.getElementById('problemDisplay').textContent = `Current Crisis: ${currentProblem.name}`;
         logToTerminal("New DNS catastrophe detected: " + currentProblem.name);
+        logToTerminal(getRandomElement(jokes));
         coffeeConsumed++;
     }
 
-    function performAction(action) {
+    function showOptions(type) {
+        const options = type === 'diagnose' ? diagnoseOptions :
+                        type === 'fix' ? fixOptions : escalateOptions;
+        const container = document.getElementById(`${type}Options`);
+        container.innerHTML = '';
+        options.forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option.name;
+            button.onclick = () => performSpecificAction(type, option);
+            container.appendChild(button);
+        });
+        document.querySelectorAll('.option-buttons').forEach(el => el.style.display = 'none');
+        container.style.display = 'flex';
+    }
+
+    function performSpecificAction(type, option) {
+        logToTerminal(`Attempting to ${type}: ${option.name}`);
+        document.getElementById('actionDescription').textContent = option.description;
+        
         let success = Math.random() < (0.7 - currentProblem.difficulty * 0.1);
         let xpGain = success ? 5 + currentProblem.difficulty : 2;
-        let message = success ? `${action} successful!` : `${action} failed.`;
-        logToTerminal(`${action} action attempted: ${message}`);
+        let message = success ? `${type} successful!` : `${type} failed.`;
+        logToTerminal(message);
+        
+        if (!success) {
+            logToTerminal(getRandomElement(jokes));
+        }
+        
         xp += xpGain;
         coffeeConsumed += Math.floor(Math.random() * 3) + 1;
         updateStats();
-        if (success && action === 'fix') {
+        
+        if (success && type === 'fix') {
             problemsSolved++;
             setTimeout(newProblem, 2000);
         }
@@ -96,6 +159,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             currentLevel = newLevel;
             document.getElementById('levelDisplay').textContent = `Level ${currentLevel + 1}: ${levels[currentLevel]}`;
             logToTerminal(`Promoted to ${levels[currentLevel]}!`);
+            logToTerminal(getRandomElement(jokes));
         }
         document.getElementById('progressBar').style.width = `${(xp % 50) * 2}%`;
     }
@@ -142,7 +206,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         welcomeBack.style.color = '#00ff00';
         welcomeBack.style.padding = '20px';
         welcomeBack.style.borderRadius = '10px';
-        welcomeBack.style.fontSize = '28px';
+        welcomeBack.style.fontSize = '24px';
         welcomeBack.style.fontWeight = 'bold';
         welcomeBack.style.zIndex = '1000';
         welcomeBack.style.boxShadow = '0 0 20px #00ff00';
@@ -168,9 +232,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
     document.getElementById('startButton').addEventListener('click', startSimulation);
-    document.getElementById('diagnoseButton').addEventListener('click', () => performAction('diagnose'));
-    document.getElementById('fixButton').addEventListener('click', () => performAction('fix'));
-    document.getElementById('escalateButton').addEventListener('click', () => performAction('escalate'));
+    document.getElementById('diagnoseButton').addEventListener('click', () => showOptions('diagnose'));
+    document.getElementById('fixButton').addEventListener('click', () => showOptions('fix'));
+    document.getElementById('escalateButton').addEventListener('click', () => showOptions('escalate'));
     document.getElementById('keepLightTheme').addEventListener('click', applyLightTheme);
     document.getElementById('revertToDarkTheme').addEventListener('click', applyDarkTheme);
 
