@@ -35,11 +35,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            overflow: hidden;
+            overflow-x: hidden;
             transition: all 0.3s ease;
         }
         #matrixCanvas {
@@ -52,28 +52,30 @@
         }
         .container {
             text-align: center;
-            padding: 40px;
+            padding: 20px;
             background-color: var(--container-bg);
             border-radius: 15px;
             box-shadow: 0 0 30px rgba(187,134,252,0.3);
-            max-width: 80%;
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
             position: relative;
             z-index: 1;
         }
         h1 {
             margin-bottom: 20px;
-            font-size: 2.8em;
+            font-size: 1.8em;
             text-shadow: 0 0 10px var(--text-color);
         }
         #problemDisplay {
-            font-size: 1.8em;
-            margin-bottom: 30px;
+            font-size: 1.2em;
+            margin-bottom: 20px;
             min-height: 2.5em;
             text-shadow: 0 0 5px var(--text-color);
         }
         button {
-            font-size: 1.3em;
-            padding: 15px 30px;
+            font-size: 1em;
+            padding: 10px 20px;
             cursor: pointer;
             background-color: var(--button-bg);
             color: var(--button-color);
@@ -82,7 +84,9 @@
             font-weight: bold;
             transition: all 0.3s ease;
             box-shadow: 0 0 10px var(--button-color);
-            margin: 10px;
+            margin: 5px;
+            width: calc(100% - 10px);
+            max-width: 200px;
         }
         button:hover {
             filter: brightness(1.2);
@@ -94,19 +98,21 @@
             padding: 10px;
             margin-top: 20px;
             text-align: left;
-            height: 200px;
+            height: 150px;
             overflow-y: auto;
-            font-size: 0.9em;
+            font-size: 0.8em;
         }
         #statsDisplay {
-            font-size: 1.2em;
+            font-size: 0.9em;
             margin-top: 20px;
         }
         #actionButtons {
             display: none;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         #levelDisplay {
-            font-size: 1.5em;
+            font-size: 1.2em;
             margin-top: 20px;
             font-weight: bold;
         }
@@ -124,6 +130,8 @@
             top: 10px;
             right: 10px;
             cursor: pointer;
+            font-size: 0.8em;
+            padding: 5px 10px;
         }
         #lightThemeMessage {
             display: none;
@@ -138,13 +146,40 @@
             z-index: 1000;
             text-align: center;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 300px;
+        }
+        #lightThemeMessage button {
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            #problemDisplay {
+                font-size: 1em;
+            }
+            button {
+                font-size: 0.9em;
+                padding: 8px 16px;
+            }
+            #terminal {
+                height: 120px;
+            }
+            #statsDisplay {
+                font-size: 0.8em;
+            }
+            #levelDisplay {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
     <canvas id="matrixCanvas"></canvas>
     <div class="container">
-        <button id="themeToggle">Toggle Theme</button>
+        <button id="themeToggle">Theme</button>
         <h1 id="mainTitle">DNS: The Tragicomedy - Absurd Troubleshooting Simulator</h1>
         <div id="levelDisplay">Level 1: DNS Novice (Blissfully Unaware)</div>
         <div id="problemDisplay">Ready to descend into DNS madness?</div>
