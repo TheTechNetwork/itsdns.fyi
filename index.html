@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DNS: The Tragicomedy - Advanced Absurd Troubleshooting Simulator v4</title>
     <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #bb86fc;
+            --container-bg: rgba(30, 30, 30, 0.8);
+            --button-bg: #003300;
+            --button-color: #00ff00;
+            --button-border: #00ff00;
+            --terminal-bg: #001100;
+            --terminal-border: #00ff00;
+            --matrix-color: #00ff00;
+        }
+
+        .light-theme {
+            --bg-color: #f0f0f0;
+            --text-color: #333;
+            --container-bg: rgba(255, 255, 255, 0.9);
+            --button-bg: #3498db;
+            --button-color: white;
+            --button-border: #2980b9;
+            --terminal-bg: #f8f8f8;
+            --terminal-border: #ddd;
+            --matrix-color: #3498db;
+        }
+
         body {
             font-family: 'Courier New', monospace;
             display: flex;
@@ -12,9 +36,10 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #000000;
-            color: #00ff00;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             overflow: hidden;
+            transition: all 0.3s ease;
         }
         #matrixCanvas {
             position: fixed;
@@ -27,9 +52,9 @@
         .container {
             text-align: center;
             padding: 40px;
-            background-color: rgba(10, 10, 10, 0.8);
+            background-color: var(--container-bg);
             border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0,255,0,0.3);
+            box-shadow: 0 0 30px rgba(187,134,252,0.3);
             max-width: 80%;
             position: relative;
             z-index: 1;
@@ -37,36 +62,34 @@
         h1 {
             margin-bottom: 20px;
             font-size: 2.8em;
-            text-shadow: 0 0 10px #00ff00;
+            text-shadow: 0 0 10px var(--text-color);
         }
         #problemDisplay {
             font-size: 1.8em;
             margin-bottom: 30px;
             min-height: 2.5em;
-            text-shadow: 0 0 5px #00ff00;
+            text-shadow: 0 0 5px var(--text-color);
         }
         button {
             font-size: 1.3em;
             padding: 15px 30px;
             cursor: pointer;
-            background-color: #003300;
-            color: #00ff00;
-            border: 2px solid #00ff00;
+            background-color: var(--button-bg);
+            color: var(--button-color);
+            border: 2px solid var(--button-border);
             border-radius: 8px;
             font-weight: bold;
             transition: all 0.3s ease;
-            text-shadow: 0 0 5px #00ff00;
-            box-shadow: 0 0 10px #00ff00;
+            box-shadow: 0 0 10px var(--button-color);
             margin: 10px;
         }
         button:hover {
-            background-color: #00ff00;
-            color: #000000;
-            box-shadow: 0 0 20px #00ff00;
+            filter: brightness(1.2);
+            box-shadow: 0 0 20px var(--button-color);
         }
         #terminal {
-            background-color: #001100;
-            border: 1px solid #00ff00;
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--terminal-border);
             padding: 10px;
             margin-top: 20px;
             text-align: left;
@@ -89,17 +112,24 @@
         #progressBar {
             width: 0;
             height: 5px;
-            background-color: #00ff00;
+            background-color: var(--button-color);
             position: absolute;
             bottom: 0;
             left: 0;
             transition: width 0.5s ease;
+        }
+        #themeToggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <canvas id="matrixCanvas"></canvas>
     <div class="container">
+        <button id="themeToggle" onclick="toggleTheme()">Toggle Theme</button>
         <h1 id="mainTitle">DNS: The Tragicomedy - Absurd Troubleshooting Simulator</h1>
         <div id="levelDisplay">Level 1: DNS Novice (Blissfully Unaware)</div>
         <div id="problemDisplay">Ready to descend into DNS madness?</div>
@@ -239,7 +269,21 @@
             return array[Math.floor(Math.random() * array.length)];
         }
 
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            updateMatrixColors();
+        }
+
+        function updateMatrixColors() {
+            const isLightTheme = document.body.classList.contains('light-theme');
+            matrixColor = isLightTheme ? '#3498db' : '#00ff00';
+            matrixBg = isLightTheme ? 'rgba(240, 240, 240, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+        }
+
         // Matrix rain effect
+        let matrixColor = '#00ff00';
+        let matrixBg = 'rgba(0, 0, 0, 0.05)';
+
         window.addEventListener('load', function() {
             const canvas = document.getElementById('matrixCanvas');
             if (canvas) {
@@ -263,10 +307,10 @@
                 }
 
                 function draw() {
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                    ctx.fillStyle = matrixBg;
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                    ctx.fillStyle = '#00ff00';
+                    ctx.fillStyle = matrixColor;
                     ctx.font = fontSize + 'px monospace';
 
                     for (let i = 0; i < drops.length; i++) {
