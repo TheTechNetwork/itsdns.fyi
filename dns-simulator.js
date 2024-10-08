@@ -21,6 +21,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
         "Legendary DNS Whisperer (Clinically Insane)"
     ];
 
+    const lightThemeMessages = [
+        "Warning: Light Theme Detected! Are you sure you want to blind yourself?",
+        "Caution: Attempting to banish the darkness. Your DNS powers may weaken!",
+        "Alert: Embracing the light side? You know what they say about the dark side having cookies...",
+        "Notice: Illumination levels rising to dangerous levels. Proceed with caution!",
+        "Heads up: You're about to enter the realm of the GUI lovers. Sure about this?"
+    ];
+
+    const darkThemeMessages = [
+        "Welcome back to the dark side!",
+        "Ah, sweet darkness! Your DNS powers are restored.",
+        "The void embraces you once more. Feel the DNS flow through you!",
+        "Back in black! Your terminal will thank you.",
+        "Darkness falls... and your troubleshooting skills rise!"
+    ];
+
     let currentProblem = null, problemsSolved = 0, xp = 0, currentLevel = 0, coffeeConsumed = 0;
 
     function logToTerminal(message) {
@@ -37,7 +53,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function newProblem() {
-        currentProblem = problems[Math.floor(Math.random() * problems.length)];
+        currentProblem = getRandomElement(problems);
         document.getElementById('problemDisplay').textContent = `Current Crisis: ${currentProblem.name}`;
         logToTerminal("New DNS catastrophe detected: " + currentProblem.name);
         coffeeConsumed++;
@@ -78,6 +94,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function showLightThemeMessage() {
+        const message = getRandomElement(lightThemeMessages);
+        document.getElementById('lightThemeMessage').querySelector('p').textContent = message;
         document.getElementById('lightThemeMessage').style.display = 'block';
     }
 
@@ -97,8 +115,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function showWelcomeBackMessage() {
+        const message = getRandomElement(darkThemeMessages);
         const welcomeBack = document.createElement('div');
-        welcomeBack.textContent = "Welcome back to the dark side!";
+        welcomeBack.textContent = message;
         welcomeBack.style.position = 'fixed';
         welcomeBack.style.top = '50%';
         welcomeBack.style.left = '50%';
@@ -125,6 +144,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const isLightTheme = document.body.classList.contains('light-theme');
         matrixColor = isLightTheme ? '#3498db' : '#00ff00';
         matrixBg = isLightTheme ? 'rgba(240, 240, 240, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+    }
+
+    function getRandomElement(array) {
+        return array[Math.floor(Math.random() * array.length)];
     }
 
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
